@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan - Daily Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #f4f7fc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #3b82f6;
+            --primary-grad: linear-gradient(135deg, #2563eb, #3b82f6);
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+        }
+
+        /* Dark Mode Theme */
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            transition: background 0.3s;
+        }
+
+        /* SIDEBAR (Sama persis navigasinya) */
+        .sidebar {
+            width: 260px; background: var(--bg-card); border-right: 1px solid var(--border);
+            padding: 24px; display: flex; flex-direction: column; gap: 30px; position: fixed; height: 100vh;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.1rem; }
+        .brand i { background: var(--primary-grad); color: white; padding: 10px; border-radius: 12px; }
+        .brand span { font-size: 0.8rem; color: var(--primary); display: block; font-weight: 500; }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .nav-item a {
+            display: flex; align-items: center; gap: 14px; padding: 12px 16px; color: var(--text-muted);
+            text-decoration: none; font-weight: 500; font-size: 0.95rem; border-radius: 12px; transition: 0.2s;
+        }
+        .nav-item.active a, .nav-item a:hover { background: #eff6ff; color: var(--primary); font-weight: 600; }
+
+        /* CONTENT AREA */
+        .main-content { margin-left: 260px; flex: 1; padding: 32px; max-width: 800px; display: flex; flex-direction: column; gap: 24px; }
+        .card { background: var(--bg-card); border-radius: 20px; padding: 24px; border: 1px solid var(--border); }
+        .card-title { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        
+        /* SETTING OPTIONS */
+        .setting-group { display: flex; flex-direction: column; gap: 20px; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+        .setting-row:last-child { border: none; padding: 0; }
+        
+        .setting-info h4 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+        .setting-info p { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* INPUTS & TOGGLES */
+        .input-num { width: 80px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text-main); text-align: center; font-weight: 600; }
+        
+        /* Switch Toggle Tampilan */
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .btn { padding: 10px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-rocket"></i>
+            <div>
+                <p style="margin:0; line-height:1.2;">Daily Tracker</p>
+                <span>Umar Edition</span>
+            </div>
+        </div>
+        <div>
+            <p class="nav-menu" style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; font-weight: 700;">Menu</p>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li class="nav-item"><a href="target.html"><i class="fa-solid fa-check-square"></i> Target Hari Ini</a></li>
+                <li class="nav-item"><a href="riwayat.html"><i class="fa-solid fa-history"></i> Riwayat</a></li>
+                <li class="nav-item"><a href="#"><i class="fa-solid fa-sliders"></i> Statistik</a></li>
+                <li class="nav-item"><a href="#"><i class="fa-solid fa-award"></i> Achievement</a></li>
+                <li class="nav-item active"><a href="pengaturan.html"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- KATEGORI 1: TAMPILAN -->
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-palette" style="color: var(--primary)"></i> Preferensi Tampilan</div>
+            <div class="setting-group">
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Mode Gelap (Dark Mode)</h4>
+                        <p>Mengubah tema aplikasi menjadi gelap agar nyaman di mata malam hari.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- KATEGORI 2: TARGET & GOALS -->
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-sliders" style="color: var(--success)"></i> Konfigurasi Target</div>
+            <div class="setting-group">
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Target Jam Belajar / Hari</h4>
+                        <p>Mengatur patokan target jam di grafik lingkaran dashboard utama.</p>
+                    </div>
+                    <input type="number" class="input-num" id="targetJamInput" value="8">
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Simpan Perubahan Target</h4>
+                        <p>Kirim konfigurasi baru ini langsung ke cloud Firebase.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveTargetConfig()">Simpan Target</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KATEGORI 3: DANGER ZONE -->
+        <div class="card" style="border-color: var(--danger)">
+            <div class="card-title" style="color: var(--danger)"><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</div>
+            <div class="setting-group">
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Reset Seluruh Data Aplikasi</h4>
+                        <p>Menghapus permanen semua list target, xp, dan riwayat kalender di Firebase.</p>
+                    </div>
+                    <button class="btn btn-danger" onclick="resetDatabase()"><i class="fa-solid fa-trash-can"></i> Reset Data</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LOGIC INTEGRASI PENGATURAN -->
+    <script>
+        const dbUrl = "https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json";
+
+        // 1. FUNGSI TEMA (LocalStorage - Instan per device)
+        function initTheme() {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            document.getElementById("themeToggle").checked = (savedTheme === "dark");
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme");
+            const newTheme = currentTheme === "dark" ? "light" : "dark";
+            
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+        }
+
+        // 2. FUNGSI AMBIL & SIMPAN CONFIG TARGET KE FIREBASE
+        function loadConfig() {
+            fetch(dbUrl)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.targetBelajarJam) {
+                        document.getElementById("targetJamInput").value = data.targetBelajarJam;
+                    }
+                }).catch(err => console.error("Gagal load config database:", err));
+        }
+
+        function saveTargetConfig() {
+            const jamBaru = parseInt(document.getElementById("targetJamInput").value) || 8;
+            
+            // Lakukan PATCH agar data tasks / history yg lain ga ketimpa terhapus
+            fetch("https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/.json", {
+                method: "PATCH",
+                body: JSON.stringify({
+                    "tasks/targetBelajarJam": jamBaru
+                })
+            })
+            .then(() => alert("Target sukses diperbarui! Cek dashboard utama lu."))
+            .catch(err => alert("Gagal menyimpan pengaturan."));
+        }
+
+        // 3. FUNGSI RESET TOTAL DATABASE (DANGEROUS)
+        function resetDatabase() {
+            const konfirmasi1 = confirm("⚠️ APA LU YAKIN? Tindakan ini bakal menghapus seluruh riwayat progress kalender dan poin XP lu!");
+            if (konfirmasi1) {
+                const konfirmasi2 = prompt("Ketik kata 'RESET' untuk mengonfirmasi aksi penghapusan permanen:");
+                if (konfirmasi2 === "RESET") {
+                    fetch(dbUrl, {
+                        method: "PUT",
+                        body: JSON.stringify({ tasks: [], xp: 0, history: {}, targetBelajarJam: 8 })
+                    })
+                    .then(() => {
+                        alert("Database berhasil dibersihkan kembali ke nol!");
+                        window.location.href = "index.html"; // mental balik ke dashboard
+                    })
+                    .catch(err => alert("Gagal melakukan reset database."));
+                } else {
+                    alert("Reset dibatalkan, ketikan konfirmasi salah.");
+                }
+            }
+        }
+
+        // Jalankan pas pertama kali load page
+        initTheme();
+        loadConfig();
+    </script>
+</body>
+</html>
