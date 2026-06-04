@@ -903,16 +903,54 @@
             renderHistory();
             renderAnalysis(pct);
             updateStats();
+
+            // Kirim data ke Firebase biar HP & Laptop sinkron
+            fetch(dbUrl, {
+                method: "PUT",
+                body: JSON.stringify({ tasks, xp, history })
+            }).catch(err => console.log("Firebase push error:", err));
+        }
+
+        // --- SCRIPT REALTIME SINKRONISASI FIREBASE ---
+        const dbUrl = "https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json";
+
+        // Ambil data otomatis dari Firebase
+        function loadDataFromFirebase() {
+            fetch(dbUrl)
+                .then(res => res.json())
+                .then(data => {
+                    if (data) {
+                        if (data.tasks) tasks = data.tasks;
+                        if (data.xp) xp = data.xp;
+                        if (data.history) history = data.history;
+                        
+                        // Render ulang setelah data ditarik
+                        renderTasks();
+                        let done = tasks.filter(t => t.done).length;
+                        let pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+                        document.getElementById("bar").style.width = pct + "%";
+                        document.getElementById("barPercentText").innerText = pct + "%";
+                        document.getElementById("heroPercent").innerText = pct + "%";
+                        renderCharts();
+                        renderHistory();
+                        renderAnalysis(pct);
+                        updateStats();
+                    }
+                }).catch(err => console.log("Firebase load error:", err));
         }
 
         document.getElementById("taskInput").addEventListener("keypress", e => {
             if (e.key === "Enter") addTask();
         });
 
+        // Jalankan interval jam & cek Firebase berkala tiap 3 detik
         setInterval(updateClock, 1000);
+        setInterval(loadDataFromFirebase, 3000);
+
+        // Inisialisasi awal saat web dibuka
         updateClock();
         buildCalendarMatrix();
-        update();
+        loadDataFromFirebase(); // Load data online dulu pertama kali
     </script>
 </body>
 </html>
