@@ -6,25 +6,42 @@
     <title>Riwayat Target - Daily Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ==================== CSS VARIABLES ENGINE RIWAYAT ==================== */
         :root {
+            --primary: #3b82f6;
+            --primary-grad: linear-gradient(135deg, #2563eb, #3b82f6);
             --bg-main: #f4f7fc;
             --bg-card: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --primary: #3b82f6;
-            --primary-grad: linear-gradient(135deg, #2563eb, #3b82f6);
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
             --border: #e2e8f0;
+            --transition-speed: 0.3s;
             
-            /* Warna Kalender */
-            --cal-0: #e2e8f0;      /* 0% abu-abu */
-            --cal-low: #6ee7b7;    /* < 50% hijau muda */
-            --cal-good: #34d399;   /* >= 50% hijau sedang */
-            --cal-perfect: #10b981;/* 100% hijau pekat */
+            --cal-0: #e2e8f0;      
+            --cal-low: #6ee7b7;    
+            --cal-good: #34d399;   
+            --cal-perfect: #10b981;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --cal-0: #334155;
+        }
+
+        [data-animation="off"] *, [data-animation="off"] {
+            --transition-speed: 0s !important;
+            transition: none !important;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed); }
+        
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
@@ -32,6 +49,11 @@
             display: flex;
             min-height: 100vh;
         }
+
+        /* COMPACT MODE FOR RIWAYAT */
+        body.compact .main-content { padding: 16px; gap: 14px; }
+        body.compact .card { padding: 14px 18px; border-radius: 12px; }
+        body.compact .history-item { padding: 10px 14px; border-radius: 10px; }
 
         /* SIDEBAR */
         .sidebar {
@@ -70,7 +92,6 @@
         }
         .calendar-day.has-data { color: white; }
         
-        /* Tooltip saat tanggal di-hover */
         .calendar-day .tooltip {
             visibility: hidden; position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
             background: #1e293b; color: white; text-align: center; padding: 6px 10px; border-radius: 6px;
@@ -85,11 +106,11 @@
         .history-list { display: flex; flex-direction: column; gap: 12px; }
         .history-item { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 16px 20px; background: #ffffff; border: 1px solid var(--border); border-radius: 14px;
+            padding: 16px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
         }
         .date-info { display: flex; align-items: center; gap: 14px; }
         .date-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-        .date-text { font-weight: 600; color: #334155; }
+        .date-text { font-weight: 600; color: var(--text-main); }
         .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
         .badge-perfect { background: #ecfdf5; color: var(--success); }
         .badge-good { background: #fffbeb; color: var(--warning); }
@@ -114,9 +135,9 @@
                 <li class="nav-item"><a href="index.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
                 <li class="nav-item"><a href="target.html"><i class="fa-solid fa-check-square"></i> Target Hari Ini</a></li>
                 <li class="nav-item active"><a href="riwayat.html"><i class="fa-solid fa-history"></i> Riwayat</a></li>
-                <li class="nav-item"><a href="#"><i class="fa-solid fa-sliders"></i> Statistik</a></li>
+                <li class="nav-item"><a href="">statistik.html<i class="fa-solid fa-sliders"></i> Statistik</a></li>
                 <li class="nav-item"><a href="#"><i class="fa-solid fa-award"></i> Achievement</a></li>
-                <li class="nav-item"><a href="#"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+                <li class="nav-item"><a href="pengaturan.html"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
             </ul>
         </div>
     </div>
@@ -124,8 +145,9 @@
     <!-- MAIN CONTENT -->
     <div class="main-content">
         
-        <!-- CARD 1: KALENDER PROGRESS (Dinamis Otomatis Bulan Berjalan) -->
-        <div class="card">
+        <!-- CARD 1: KALENDER PROGRESS -->
+        <!-- ➕ PASANG ID WIDGET HEATMAP DI SINI -->
+        <div class="card" id="widget-heatmap-matrix">
             <div class="card-title">
                 <i class="fa-regular fa-calendar-days" style="color: var(--primary)"></i> Kalender Progress
             </div>
@@ -134,9 +156,7 @@
                 <span id="nextMonthLabel">Bulan Depan</span>
             </div>
             
-            <div class="calendar-grid" id="calendarGrid">
-                <!-- Kotak tanggal di-generate otomatis oleh JavaScript -->
-            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
 
             <div class="calendar-legend">
                 <span>0%</span>
@@ -149,7 +169,8 @@
         </div>
 
         <!-- CARD 2: DETAIL LIST PERFORMA -->
-        <div class="card">
+        <!-- ➕ PASANG ID WIDGET TARGET BULANAN DI SINI -->
+        <div class="card" id="widget-target-bulanan">
             <div class="card-title">
                 <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary)"></i> Riwayat Performa Harian
             </div>
@@ -172,31 +193,20 @@
         function generateCalendar(historyData) {
             const grid = document.getElementById("calendarGrid");
             grid.innerHTML = "";
-
             const sekarang = new Date();
             const tahun = sekarang.getFullYear();
-            const bulan = sekarang.getMonth(); // Bulan berjalan (0 = Jan, 3 = Apr, dst.)
-
-            // Set nama label bulan di atas kalender
+            const bulan = sekarang.getMonth();
             const namaBulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
             document.getElementById("currentMonthLabel").innerText = namaBulan[bulan];
             document.getElementById("nextMonthLabel").innerText = namaBulan[(bulan + 1) % 12];
-
-            // Cari jumlah hari dalam bulan ini
             const jumlahHari = new Date(tahun, bulan + 1, 0).getDate();
 
             for (let i = 1; i <= jumlahHari; i++) {
-                // Format date string pencocokan database (YYYY-MM-DD) dengan padding 0
                 const mm = String(bulan + 1).padStart(2, '0');
                 const dd = String(i).padStart(2, '0');
                 const fullDateKey = `${tahun}-${mm}-${dd}`;
-
                 let pct = null;
-                if (historyData && historyData[fullDateKey] !== undefined) {
-                    pct = historyData[fullDateKey];
-                }
-
-                // Tentukan warna balok berdasarkan nilai progress
+                if (historyData && historyData[fullDateKey] !== undefined) { pct = historyData[fullDateKey]; }
                 let bgStyle = "background: var(--cal-0);";
                 let customClass = "";
                 let tooltipText = `Tanggal ${i}: Belum ada target`;
@@ -204,22 +214,32 @@
                 if (pct !== null) {
                     customClass = "has-data";
                     tooltipText = `Tanggal ${i}: Progress ${pct}%`;
-                    if (pct === 100) {
-                        bgStyle = "background: var(--cal-perfect);";
-                    } else if (pct >= 50) {
-                        bgStyle = "background: var(--cal-good);";
-                    } else {
-                        bgStyle = "background: var(--cal-low);";
-                    }
+                    if (pct === 100) { bgStyle = "background: var(--cal-perfect);"; } 
+                    else if (pct >= 50) { bgStyle = "background: var(--cal-good);"; } 
+                    else { bgStyle = "background: var(--cal-low);"; }
                 }
-
-                grid.innerHTML += `
-                    <div class="calendar-day ${customClass}" style="${bgStyle}">
-                        ${i}
-                        <div class="tooltip">${tooltipText}</div>
-                    </div>
-                `;
+                grid.innerHTML += `<div class="calendar-day ${customClass}" style="${bgStyle}">${i}<div class="tooltip">${tooltipText}</div></div>`;
             }
+        }
+
+        // ==================== ANTENA SETTING RIWAYAT ENGINE ====================
+        function applyRiwayatSettings() {
+            const isDark = localStorage.getItem("darkToggle") === "true";
+            document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+
+            const temaWarna = localStorage.getItem("themeColor") || "#3b82f6";
+            document.documentElement.style.setProperty('--primary', temaWarna);
+            document.documentElement.style.setProperty('--primary-grad', `linear-gradient(135deg, ${temaWarna}, ${temaWarna}dd)`);
+
+            const isAnimationOn = localStorage.getItem("animasiToggle") !== "false"; 
+            document.documentElement.setAttribute("data-animation", isAnimationOn ? "on" : "off");
+
+            const isCompact = localStorage.getItem("compactToggle") === "true";
+            if (isCompact) { document.body.classList.add("compact"); } else { document.body.classList.remove("compact"); }
+
+            // Handle visibilitas Heatmap & Target Bulanan
+            if(document.getElementById("widget-heatmap-matrix")) document.getElementById("widget-heatmap-matrix").style.display = localStorage.getItem("wHeatmap") !== "false" ? "block" : "none";
+            if(document.getElementById("widget-target-bulanan")) document.getElementById("widget-target-bulanan").style.display = localStorage.getItem("wTargetBulanan") !== "false" ? "block" : "none";
         }
 
         function loadAllData() {
@@ -227,11 +247,7 @@
                 .then(res => res.json())
                 .then(data => {
                     const historyData = (data && data.history) ? data.history : {};
-                    
-                    // 1. Render Komponen Kalender
                     generateCalendar(historyData);
-
-                    // 2. Render Komponen List Riwayat di bawahnya
                     const box = document.getElementById("historyBox");
                     box.innerHTML = "";
 
@@ -241,39 +257,25 @@
                     }
 
                     const sortedDates = Object.keys(historyData).sort((a, b) => new Date(b) - new Date(a));
-
                     sortedDates.forEach(date => {
                         const pct = historyData[date];
                         let badgeClass = "", badgeText = "", iconColor = "";
-
-                        if (pct === 100) {
-                            badgeClass = "badge-perfect";
-                            badgeText = `<i class="fa-solid fa-circle-check"></i> 100% Bersih`;
-                            iconColor = "background: #d1fae5; color: var(--success);";
-                        } else if (pct >= 50) {
-                            badgeClass = "badge-good";
-                            badgeText = `<i class="fa-solid fa-bolt"></i> ${pct}% Produktif`;
-                            iconColor = "background: #fef3c7; color: var(--warning);";
-                        } else {
-                            badgeClass = "badge-low";
-                            badgeText = `<i class="fa-solid fa-circle-exclamation"></i> ${pct}% Kurang`;
-                            iconColor = "background: #fee2e2; color: var(--danger);";
-                        }
+                        if (pct === 100) { badgeClass = "badge-perfect"; badgeText = `<i class="fa-solid fa-circle-check"></i> 100% Bersih`; iconColor = "background: #d1fae5; color: var(--success);"; } 
+                        else if (pct >= 50) { badgeClass = "badge-good"; badgeText = `<i class="fa-solid fa-bolt"></i> ${pct}% Produktif`; iconColor = "background: #fef3c7; color: var(--warning);"; } 
+                        else { badgeClass = "badge-low"; badgeText = `<i class="fa-solid fa-circle-exclamation"></i> ${pct}% Kurang`; iconColor = "background: #fee2e2; color: var(--danger);"; }
 
                         box.innerHTML += `
                             <div class="history-item">
                                 <div class="date-info">
-                                    <div class="date-icon" style="${iconColor}">
-                                        <i class="fa-regular fa-calendar"></i>
-                                    </div>
+                                    <div class="date-icon" style="${iconColor}"><i class="fa-regular fa-calendar"></i></div>
                                     <div class="date-text">${formatTanggal(date)}</div>
                                 </div>
-                                <div class="status-badge ${badgeClass}">
-                                    ${badgeText}
-                                </div>
-                            </div>
-                        `;
+                                <div class="status-badge ${badgeClass}">${badgeText}</div>
+                            </div>`;
                     });
+
+                    // 🛠️ EKSEKUSI ANTENA SETELAH SEMUA DATA SELESAI DI-RENDER ONLINE
+                    applyRiwayatSettings();
                 })
                 .catch(err => {
                     console.error("Gagal memuat database:", err);
