@@ -841,11 +841,39 @@
         }
 
         function calcStreak() {
+            // 1. Urutkan tanggal dari yang paling lama ke paling baru
             let dates = Object.keys(history).sort();
             let s = 0;
-            for (let i = dates.length - 1; i >= 0; i--) { if (history[dates[i]] > 0) s++; else break; }
-            document.getElementById("streak").innerText = s + " Hari";
-            return s;
+    
+            // 2. Ambil tanggal hari ini secara dinamis (Format: YYYY-MM-DD)
+            const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+            const currentTodayKey = (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
+
+            // 3. Jalankan loop mundur dari hari paling baru (hari ini) ke belakang
+            for (let i = dates.length - 1; i >= 0; i--) {
+            const dateKey = dates[i];
+            const progress = history[dateKey] || 0;
+
+            // KASUS KHUSUS HARI INI: 
+            // Kalau hari ini baru mulai (masih 0% atau belum 100%), 
+            // JANGAN langsung merusak streak hari-hari kemarin. Skip aja dulu.
+            if (dateKey === currentTodayKey && progress < 100) {
+            continue;
+        }
+
+            // KONDISI UTAMA STREAK:
+            // Harus 100% tepat untuk bisa dihitung masuk streak
+            if (progress === 100) {
+                s++;
+            } else {
+            // Begitu ketemu yang DI BAWAH 100%, streak langsung PUTUS (break)
+            break;
+        }
+    }
+
+    // 4. Tampilkan hasilnya ke dashboard
+    document.getElementById("streak").innerText = s + " Hari";
+    return s;
         }
 
         function renderAnalysis(pct) {
