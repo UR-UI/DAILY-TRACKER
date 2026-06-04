@@ -17,6 +17,12 @@
             --warning: #f59e0b;
             --danger: #ef4444;
             --border: #e2e8f0;
+            
+            /* Warna Kalender */
+            --cal-0: #e2e8f0;      /* 0% abu-abu */
+            --cal-low: #6ee7b7;    /* < 50% hijau muda */
+            --cal-good: #34d399;   /* >= 50% hijau sedang */
+            --cal-perfect: #10b981;/* 100% hijau pekat */
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -27,7 +33,7 @@
             min-height: 100vh;
         }
 
-        /* SIDEBAR (Sama persis dengan index.html & target.html) */
+        /* SIDEBAR */
         .sidebar {
             width: 260px;
             background: var(--bg-card);
@@ -50,43 +56,45 @@
         .nav-item.active a, .nav-item a:hover { background: #eff6ff; color: var(--primary); font-weight: 600; }
 
         /* CONTENT AREA */
-        .main-content { margin-left: 260px; flex: 1; padding: 32px; max-width: 900px; }
+        .main-content { margin-left: 260px; flex: 1; padding: 32px; max-width: 900px; display: flex; flex-direction: column; gap: 24px; }
         .card { background: var(--bg-card); border-radius: 20px; padding: 24px; border: 1px solid var(--border); }
-        .card-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .card-title { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .card-title { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+
+        /* KALENDER PROGRESS STYLING */
+        .calendar-header { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); font-weight: 600; margin-bottom: 15px; padding: 0 4px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 15px; }
+        .calendar-day { 
+            aspect-ratio: 1; background: var(--cal-0); border-radius: 8px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 600; font-size: 0.95rem; color: #475569; position: relative; cursor: pointer;
+        }
+        .calendar-day.has-data { color: white; }
         
-        /* HISTORY TABLE/LIST */
+        /* Tooltip saat tanggal di-hover */
+        .calendar-day .tooltip {
+            visibility: hidden; position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
+            background: #1e293b; color: white; text-align: center; padding: 6px 10px; border-radius: 6px;
+            font-size: 0.75rem; white-space: nowrap; z-index: 10; opacity: 0; transition: opacity 0.2s;
+        }
+        .calendar-day:hover .tooltip { visibility: visible; opacity: 1; }
+
+        .calendar-legend { display: flex; justify-content: flex-end; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+        .cube { width: 14px; height: 14px; border-radius: 3px; }
+
+        /* HISTORY LIST */
         .history-list { display: flex; flex-direction: column; gap: 12px; }
         .history-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 16px 20px; 
-            background: #ffffff; 
-            border: 1px solid var(--border); 
-            border-radius: 14px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .history-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 16px 20px; background: #ffffff; border: 1px solid var(--border); border-radius: 14px;
         }
         .date-info { display: flex; align-items: center; gap: 14px; }
-        .date-icon {
-            width: 42px; height: 42px; border-radius: 10px; 
-            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
-        }
+        .date-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
         .date-text { font-weight: 600; color: #334155; }
-        
-        /* STATUS BADGES */
-        .status-badge {
-            padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px;
-        }
+        .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
         .badge-perfect { background: #ecfdf5; color: var(--success); }
         .badge-good { background: #fffbeb; color: var(--warning); }
         .badge-low { background: #fef2f2; color: var(--danger); }
-
-        .no-data { text-align: center; color: var(--text-muted); padding: 40px 0; font-style: italic; }
+        .no-data { text-align: center; color: var(--text-muted); padding: 30px 0; font-style: italic; }
     </style>
 </head>
 <body>
@@ -115,51 +123,129 @@
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
+        
+        <!-- CARD 1: KALENDER PROGRESS (Dinamis Otomatis Bulan Berjalan) -->
         <div class="card">
-            <div class="card-title-container">
-                <div class="card-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--primary)"></i> Riwayat Performa Harian</div>
+            <div class="card-title">
+                <i class="fa-regular fa-calendar-days" style="color: var(--primary)"></i> Kalender Progress
+            </div>
+            <div class="calendar-header">
+                <span id="currentMonthLabel">Bulan</span>
+                <span id="nextMonthLabel">Bulan Depan</span>
             </div>
             
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Kotak tanggal di-generate otomatis oleh JavaScript -->
+            </div>
+
+            <div class="calendar-legend">
+                <span>0%</span>
+                <div class="cube" style="background: var(--cal-0)"></div>
+                <div class="cube" style="background: var(--cal-low)"></div>
+                <div class="cube" style="background: var(--cal-good)"></div>
+                <div class="cube" style="background: var(--cal-perfect)"></div>
+                <span>100%</span>
+            </div>
+        </div>
+
+        <!-- CARD 2: DETAIL LIST PERFORMA -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary)"></i> Riwayat Performa Harian
+            </div>
             <div class="history-list" id="historyBox">
-                <!-- Data dari Firebase bakal muncul di sini -->
                 <div class="no-data">Memuat riwayat data...</div>
             </div>
         </div>
+
     </div>
 
-    <!-- LOGIC FETCH DATA -->
+    <!-- BUSINESS LOGIC -->
     <script>
         const dbUrl = "https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json";
 
-        // Fungsi format tanggal (Contoh: 2026-04-18 -> Sabtu, 18 Apr 2026)
         function formatTanggal(dateStr) {
             const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('id-ID', options);
+            return new Date(dateStr).toLocaleDateString('id-ID', options);
         }
 
-        function loadHistory() {
+        function generateCalendar(historyData) {
+            const grid = document.getElementById("calendarGrid");
+            grid.innerHTML = "";
+
+            const sekarang = new Date();
+            const tahun = sekarang.getFullYear();
+            const bulan = sekarang.getMonth(); // Bulan berjalan (0 = Jan, 3 = Apr, dst.)
+
+            // Set nama label bulan di atas kalender
+            const namaBulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+            document.getElementById("currentMonthLabel").innerText = namaBulan[bulan];
+            document.getElementById("nextMonthLabel").innerText = namaBulan[(bulan + 1) % 12];
+
+            // Cari jumlah hari dalam bulan ini
+            const jumlahHari = new Date(tahun, bulan + 1, 0).getDate();
+
+            for (let i = 1; i <= jumlahHari; i++) {
+                // Format date string pencocokan database (YYYY-MM-DD) dengan padding 0
+                const mm = String(bulan + 1).padStart(2, '0');
+                const dd = String(i).padStart(2, '0');
+                const fullDateKey = `${tahun}-${mm}-${dd}`;
+
+                let pct = null;
+                if (historyData && historyData[fullDateKey] !== undefined) {
+                    pct = historyData[fullDateKey];
+                }
+
+                // Tentukan warna balok berdasarkan nilai progress
+                let bgStyle = "background: var(--cal-0);";
+                let customClass = "";
+                let tooltipText = `Tanggal ${i}: Belum ada target`;
+
+                if (pct !== null) {
+                    customClass = "has-data";
+                    tooltipText = `Tanggal ${i}: Progress ${pct}%`;
+                    if (pct === 100) {
+                        bgStyle = "background: var(--cal-perfect);";
+                    } else if (pct >= 50) {
+                        bgStyle = "background: var(--cal-good);";
+                    } else {
+                        bgStyle = "background: var(--cal-low);";
+                    }
+                }
+
+                grid.innerHTML += `
+                    <div class="calendar-day ${customClass}" style="${bgStyle}">
+                        ${i}
+                        <div class="tooltip">${tooltipText}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function loadAllData() {
             fetch(dbUrl)
                 .then(res => res.json())
                 .then(data => {
+                    const historyData = (data && data.history) ? data.history : {};
+                    
+                    // 1. Render Komponen Kalender
+                    generateCalendar(historyData);
+
+                    // 2. Render Komponen List Riwayat di bawahnya
                     const box = document.getElementById("historyBox");
                     box.innerHTML = "";
 
-                    if (!data || !data.history || Object.keys(data.history).length === 0) {
+                    if (Object.keys(historyData).length === 0) {
                         box.innerHTML = `<div class="no-data">Belum ada riwayat terekam. Selesaikan target pertamamu!</div>`;
                         return;
                     }
 
-                    // Ambil object history, urutkan dari tanggal terbaru di atas
-                    const sortedDates = Object.keys(data.history).sort((a, b) => new Date(b) - new Date(a));
+                    const sortedDates = Object.keys(historyData).sort((a, b) => new Date(b) - new Date(a));
 
                     sortedDates.forEach(date => {
-                        const pct = data.history[date];
-                        let badgeClass = "";
-                        let badgeText = "";
-                        let iconColor = "";
+                        const pct = historyData[date];
+                        let badgeClass = "", badgeText = "", iconColor = "";
 
-                        // Penentuan badge berdasarkan persentase progress harian
                         if (pct === 100) {
                             badgeClass = "badge-perfect";
                             badgeText = `<i class="fa-solid fa-circle-check"></i> 100% Bersih`;
@@ -190,13 +276,12 @@
                     });
                 })
                 .catch(err => {
-                    console.error("Gagal memuat riwayat:", err);
+                    console.error("Gagal memuat database:", err);
                     document.getElementById("historyBox").innerHTML = `<div class="no-data" style="color:red;">Gagal menyambung ke server database.</div>`;
                 });
         }
 
-        // Jalankan saat halaman dibuka
-        loadHistory();
+        loadAllData();
     </script>
 </body>
 </html>
