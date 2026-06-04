@@ -9,19 +9,44 @@
     <!-- FontAwesome untuk Ikon Menu dan Stats -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ==================== CSS VARIABLES ENGINE (BARU) ==================== */
         :root {
+            --primary: #3b82f6;
+            --primary-grad: linear-gradient(135deg, #2563eb, #3b82f6);
             --bg-main: #f4f7fc;
             --bg-card: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --primary: #3b82f6;
-            --primary-grad: linear-gradient(135deg, #2563eb, #3b82f6);
             --hero-grad: linear-gradient(135deg, #1d4ed8, #3b82f6);
             --success: #10b981;
             --border: #e2e8f0;
+            --transition-speed: 0.3s;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* Mode Gelap (Dark Mode) Override */
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --hero-grad: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        }
+
+        /* Fitur Efek Animasi OFF */
+        [data-animation="off"] *, 
+        [data-animation="off"] {
+            --transition-speed: 0s !important;
+            transition: none !important;
+            animation: none !important;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            transition: background var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+        }
         
         body {
             background-color: var(--bg-main);
@@ -30,6 +55,14 @@
             display: flex;
             min-height: 100vh;
         }
+
+        /* FITUR COMPACT MODE */
+        body.compact .main-content { padding: 16px; }
+        body.compact .hero-panel { padding: 16px 24px; margin-bottom: 16px; }
+        body.compact .stats-grid { gap: 10px; margin-bottom: 16px; }
+        body.compact .stat-card { padding: 10px; border-radius: 12px; }
+        body.compact .card { padding: 16px; border-radius: 14px; }
+        body.compact .task-item { padding: 8px 6px; }
 
         /* SIDEBAR COMPONENT */
         .sidebar {
@@ -253,30 +286,13 @@
         /* DASHBOARD MASTER LAYOUT DESIGN (SPLIT LEFT & RIGHT) */
         .dashboard-layout {
             display: grid;
-            grid-template-columns: 1.1fr 1fr; /* Kiri (Target) agak lebih lebar sedikit */
+            grid-template-columns: 1.1fr 1fr;
             gap: 24px;
         }
         
-        /* Kolom Kiri diisi Target Hari Ini secara penuh ke bawah */
-        .layout-left {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        /* Kolom Kanan diisi oleh section Chart & Riwayat yang numpuk */
-        .layout-right {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        /* Grid internal untuk chart sampingan */
-        .charts-subgrid {
-            display: grid;
-            grid-template-columns: 1fr 0.9fr;
-            gap: 24px;
-        }
+        .layout-left { display: flex; flex-direction: column; gap: 24px; }
+        .layout-right { display: flex; flex-direction: column; gap: 24px; }
+        .charts-subgrid { display: grid; grid-template-columns: 1fr 0.9fr; gap: 24px; }
 
         /* INPUT & TASK LIST COMPONENT */
         .input-box { display: flex; gap: 10px; margin-bottom: 16px; }
@@ -299,7 +315,6 @@
         .task-item:hover { background: #f8fafc; border-radius: 8px; }
         .task-left { display: flex; align-items: center; gap: 14px; }
         
-        /* Custom styled Checkbox */
         .task-item input[type="checkbox"] {
             appearance: none; width: 22px; height: 22px; border: 2px solid #cbd5e1;
             border-radius: 50%; cursor: pointer; display: grid; place-content: center; transition: 0.2s;
@@ -329,10 +344,8 @@
         .progress-bg { height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.4s ease; }
 
-        /* CHARTS ELEMENTS */
         .chart-wrapper { position: relative; height: 220px; width: 100%; }
 
-        /* HISTORY AND CALENDAR PILLS */
         .history-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .history-table tr { border-bottom: 1px solid #f1f5f9; }
         .history-table td { padding: 12px 8px; }
@@ -344,7 +357,6 @@
         .pills-pct.mid { background: #fef3c7; color: #92400e; }
         .pills-pct.low { background: #fee2e2; color: #991b1b; }
 
-        /* RECENT HISTORIC GRID (MATRIX MOCK) */
         .calendar-grid {
             display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px;
         }
@@ -355,7 +367,6 @@
         .calendar-day.active-100 { background: #10b981; color: white; }
         .calendar-day.active-50 { background: #6ee7b7; color: #065f46; }
 
-        /* RESPONSIVE DESIGN */
         @media(max-width: 1300px) {
             .dashboard-layout { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
@@ -415,7 +426,8 @@
         
         <!-- TOPBAR CONTROLS -->
         <div class="topbar">
-            <div class="weather"><i class="fa-solid fa-sun"></i> Cerah, 28°C</div>
+            <!-- ➕ PASANG ID WIDGET CUACA DI SINI -->
+            <div class="weather" id="widget-cuaca"><i class="fa-solid fa-sun"></i> Cerah, 28°C</div>
             <div style="cursor:pointer;"><i class="fa-solid fa-bell"></i></div>
             <div class="avatar" style="width:32px; height:32px; font-size:0.9rem;">U</div>
         </div>
@@ -425,7 +437,8 @@
             <div class="hero-left">
                 <div class="hero-greet" id="greeting">👋 Selamat Pagi, Umar!</div>
                 <div class="hero-date" id="today">Kamis, 15 Mei 2026</div>
-                <div class="hero-clock" id="clock">07 : 45 : 30</div>
+                <!-- ➕ PASANG ID WIDGET JAM DI SINI -->
+                <div class="hero-clock" id="widget-jam">07 : 45 : 30</div>
                 <div class="hero-quote-box">
                     <i class="fa-solid fa-quote-left"></i>
                     <span id="motivation">Discipline today, success tomorrow.</span>
@@ -433,7 +446,8 @@
             </div>
 
             <!-- Dashboard Circular Progress Center -->
-            <div class="hero-center">
+            <!-- ➕ PASANG ID PROGRESS CIRCLE DI SINI -->
+            <div class="hero-center" id="widget-progress">
                 <canvas id="heroCircleChart" width="140" height="140"></canvas>
                 <div class="hero-pct-text">
                     <h2 id="heroPercent">0%</h2>
@@ -467,8 +481,10 @@
         </div>
 
         <!-- SIX CARDS STATS GRID -->
-        <div class="stats-grid">
-            <div class="stat-card">
+        <!-- ➕ PASANG ID WIDGET STATISTIK MINGGUAN & XP CARD -->
+        <div class="stats-grid" id="widget-statistik">
+            <!-- XP CARD 1 -->
+            <div class="stat-card" id="widget-xp">
                 <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
                 <div class="stat-details">
                     <small>Total XP</small>
@@ -476,7 +492,8 @@
                     <div class="stat-subtext pos">+120 hari ini</div>
                 </div>
             </div>
-            <div class="stat-card">
+            <!-- XP CARD 2 (LEVEL) -->
+            <div class="stat-card" id="widget-xp-level">
                 <div class="stat-icon"><i class="fa-solid fa-level-up-alt"></i></div>
                 <div class="stat-details">
                     <small>Level</small>
@@ -520,8 +537,6 @@
 
         <!-- MASTER TWO-COLUMN LAYOUT -->
         <div class="dashboard-layout">
-            
-            <!-- LEFT COLUMN: TARGET HARI INI (Lebar, Panjang ke bawah) -->
             <div class="layout-left">
                 <div class="card" style="width: 100%;">
                     <div class="card-title-container">
@@ -536,9 +551,7 @@
                         <button class="btn-add" style="background:var(--primary); color:white;" onclick="addTask()">Simpan</button>
                     </div>
 
-                    <div class="task-list" id="tasks">
-                        <!-- Checklist Tasks Content -->
-                    </div>
+                    <div class="task-list" id="tasks"></div>
 
                     <div class="progress-container">
                         <div class="progress-label-bar">
@@ -552,12 +565,8 @@
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: CHARTS, HISTORI & KALENDER (Numpuk di Kanan) -->
             <div class="layout-right">
-                
-                <!-- SUBGRID UNTUK DUA CHART ATAS -->
                 <div class="charts-subgrid">
-                    <!-- Tren Line Chart -->
                     <div class="card">
                         <div class="card-title-container">
                             <div class="card-title"><i class="fa-solid fa-chart-area" style="color:var(--primary)"></i> Tren 30 Hari</div>
@@ -567,7 +576,6 @@
                         </div>
                     </div>
 
-                    <!-- Doughnut Pie Chart -->
                     <div class="card">
                         <div class="card-title-container">
                             <div class="card-title"><i class="fa-solid fa-chart-pie" style="color:var(--success)"></i> Hari Ini</div>
@@ -579,19 +587,14 @@
                     </div>
                 </div>
 
-                <!-- SUBGRID UNTUK RIWAYAT DAN KALENDER MATRIX -->
                 <div class="charts-subgrid">
-                    <!-- Riwayat Terakhir -->
                     <div class="card">
                         <div class="card-title-container">
                             <div class="card-title"><i class="fa-solid fa-history" style="color:var(--text-muted)"></i> Riwayat Terakhir</div>
                         </div>
-                        <div id="history">
-                            <!-- Historic Tables -->
-                        </div>
+                        <div id="history"></div>
                     </div>
 
-                    <!-- Kalender Progress -->
                     <div class="card">
                         <div class="card-title-container">
                             <div class="card-title"><i class="fa-solid fa-calendar-alt" style="color:var(--primary)"></i> Kalender Progress</div>
@@ -600,9 +603,7 @@
                             <span>Apr</span>
                             <span>Mei</span>
                         </div>
-                        <div class="calendar-grid" id="calendarMatrix">
-                            <!-- Matrix Grid Elements Mockup -->
-                        </div>
+                        <div class="calendar-grid" id="calendarMatrix"></div>
                         <div style="display:flex; align-items:center; justify-content:flex-end; gap:6px; font-size:0.65rem; margin-top:12px; color:var(--text-muted);">
                             <span>0%</span>
                             <div style="width:10px; height:10px; background:#e2e8f0; border-radius:2px;"></div>
@@ -612,11 +613,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
     </div>
 
     <!-- CORE BUSINESS LOGIC -->
@@ -627,15 +625,8 @@
         document.getElementById("today").innerHTML = new Date().toLocaleDateString("id-ID", { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
 
         const defaultTasks = [
-            "Bangun tepat waktu",
-            "Olahraga",
-            "Membaca 10 halaman",
-            "Belajar fokus",
-            "Minum air cukup",
-            "Merapikan kamar",
-            "Tidur tepat waktu",
-            "Belajar coding 30 menit",
-            "Jurnal malam"
+            "Bangun tepat waktu", "Olahraga", "Membaca 10 halaman", "Belajar fokus",
+            "Minum air cukup", "Merapikan kamar", "Tidur tepat waktu", "Belajar coding 30 menit", "Jurnal malam"
         ];
 
         let tasks = JSON.parse(localStorage.getItem("tasks_" + todayKey) || "[]");
@@ -722,11 +713,7 @@
                         borderWidth: 0
                     }]
                 },
-                options: {
-                    cutout: "82%",
-                    plugins: { tooltip: { enabled: false } },
-                    events: []
-                }
+                options: { cutout: "82%", plugins: { tooltip: { enabled: false } }, events: [] }
             });
 
             if (pie) pie.destroy();
@@ -734,18 +721,9 @@
                 type: "doughnut",
                 data: {
                     labels: ["Selesai", "Belum"],
-                    datasets: [{
-                        data: [done, pending],
-                        backgroundColor: ["#10b981", "#e2e8f0"],
-                        borderWidth: 2,
-                        borderColor: "#ffffff"
-                    }]
+                    datasets: [{ data: [done, pending], backgroundColor: ["#10b981", "#e2e8f0"], borderWidth: 2, borderColor: "#ffffff" }]
                 },
-                options: {
-                    cutout: "75%",
-                    plugins: { legend: { display: false } },
-                    maintainAspectRatio: false
-                }
+                options: { cutout: "75%", plugins: { legend: { display: false } }, maintainAspectRatio: false }
             });
             document.getElementById("pieTotalText").innerText = `Selesai ${done} dari Total ${tasks.length} Task`;
 
@@ -759,23 +737,13 @@
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: "Progress %",
-                        data: chartValues,
-                        borderColor: "#3b82f6",
-                        backgroundColor: "rgba(59, 130, 246, 0.05)",
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: "#3b82f6",
-                        pointRadius: 4
+                        label: "Progress %", data: chartValues, borderColor: "var(--primary)",
+                        backgroundColor: "rgba(59, 130, 246, 0.05)", fill: true, tension: 0.3, pointBackgroundColor: "var(--primary)", pointRadius: 4
                     }]
                 },
                 options: {
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { min: 0, max: 100, grid: { color: "#f1f5f9" } },
-                        x: { grid: { display: false } }
-                    }
+                    maintainAspectRatio: false, plugins: { legend: { display: false } },
+                    scales: { y: { min: 0, max: 100, grid: { color: "#f1f5f9" } }, x: { grid: { display: false } } }
                 }
             });
         }
@@ -783,18 +751,12 @@
         function renderHistory() {
             let keys = Object.keys(history).sort().reverse().slice(0, 4);
             if(keys.length === 0) keys = [todayKey];
-            
             let html = "<table class='history-table'>";
             keys.forEach(k => {
                 let currentPct = history[k] || 0;
                 let classColor = currentPct >= 80 ? 'high' : currentPct >= 50 ? 'mid' : 'low';
                 let formattedKeyDate = new Date(k).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' });
-                
-                html += `
-                <tr>
-                    <td style="color:var(--text-muted); font-weight:500;"><i class="fa-regular fa-calendar-check" style="margin-right:6px; color:var(--primary);"></i> ${formattedKeyDate}</td>
-                    <td style="text-align:right;"><span class="pills-pct ${classColor}">${currentPct}%</span></td>
-                </tr>`;
+                html += `<tr><td style="color:var(--text-muted); font-weight:500;"><i class="fa-regular fa-calendar-check" style="margin-right:6px; color:var(--primary);"></i> ${formattedKeyDate}</td><td style="text-align:right;"><span class="pills-pct ${classColor}">${currentPct}%</span></td></tr>`;
             });
             html += "</table>";
             document.getElementById("history").innerHTML = html;
@@ -803,19 +765,13 @@
         function calcStreak() {
             let dates = Object.keys(history).sort();
             let s = 0;
-            for (let i = dates.length - 1; i >= 0; i--) {
-                if (history[dates[i]] > 0) s++;
-                else break;
-            }
+            for (let i = dates.length - 1; i >= 0; i--) { if (history[dates[i]] > 0) s++; else break; }
             document.getElementById("streak").innerText = s + " Hari";
             return s;
         }
 
         function renderAnalysis(pct) {
-            document.getElementById("motivation").innerText =
-                pct >= 80 ? "Discipline today, success tomorrow." :
-                pct >= 50 ? "Progress bagus, selesaikan sisanya!" :
-                "Mulai langkah kecilmu dengan selesaikan satu target.";
+            document.getElementById("motivation").innerText = pct >= 80 ? "Discipline today, success tomorrow." : pct >= 50 ? "Progress bagus, selesaikan sisanya!" : "Mulai langkah kecilmu dengan selesaikan satu target.";
         }
 
         function getLevel() {
@@ -829,25 +785,17 @@
         function updateStats() {
             let streak = calcStreak();
             let currentLvl = getLevel();
-            
             document.getElementById("xp").innerText = xp.toLocaleString("id-ID");
             document.getElementById("level").innerText = currentLvl.title;
             document.getElementById("sidebarBadge").innerText = "Level " + currentLvl.title;
             document.getElementById("xpNeeded").innerText = `${currentLvl.next - xp} XP lagi`;
             document.getElementById("completedTasks").innerText = `${tasks.filter(t => t.done).length} / ${tasks.length}`;
             document.getElementById("taskMiniStatus").innerText = `${tasks.filter(t => t.done).length} task selesai`;
-
             let vals = Object.values(history);
             let avg = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
             document.getElementById("avg30").innerText = avg + "%";
-
             let ach = "-";
-            if (streak >= 365) ach = "Monster";
-            else if (streak >= 100) ach = "Elite";
-            else if (streak >= 30) ach = "Warrior";
-            else if (streak >= 7) ach = "Consistent";
-            else if (streak >= 3) ach = "Rookie";
-
+            if (streak >= 365) ach = "Monster"; else if (streak >= 100) ach = "Elite"; else if (streak >= 30) ach = "Warrior"; else if (streak >= 7) ach = "Consistent"; else if (streak >= 3) ach = "Rookie";
             document.getElementById("achievement").innerText = ach;
             document.getElementById("bestStreak").innerText = `Best: ${streak} Hari`;
         }
@@ -867,54 +815,64 @@
         function updateClock() {
             const now = new Date();
             document.getElementById("clock").innerText = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).replace(/\./g, ' : ');
-            
             const start = new Date(now.getFullYear(), 0, 0);
             const diff = now - start;
             const day = Math.floor(diff / 86400000);
-            
             document.getElementById("dayInfo").innerText = `Day ${day} / ${((now.getFullYear() % 4 === 0) ? 366 : 365)}`;
             document.getElementById("weekInfo").innerText = `Week ${Math.ceil(day / 7)}`;
-
             let remainingHours = 23 - now.getHours();
             let remainingMinutes = 59 - now.getMinutes();
             document.getElementById("timeRemaining").innerText = `${remainingHours} jam ${remainingMinutes} menit`;
-
             const h = now.getHours();
-            let greet = h < 11 ? `☀️ Selamat Pagi, ${userName}!` :
-                        h < 15 ? `🌤️ Selamat Siang, ${userName}!` :
-                        h < 18 ? `🌇 Selamat Sore, ${userName}!` :
-                                 `🌙 Selamat Malam, ${userName}!`;
-
+            let greet = h < 11 ? `☀️ Selamat Pagi, ${userName}!` : h < 15 ? `🌤️ Selamat Siang, ${userName}!` : h < 18 ? `🌇 Selamat Sore, ${userName}!` : `🌙 Selamat Malam, ${userName}!`;
             document.getElementById("greeting").innerText = greet;
+        }
+
+        // ==================== ANTENA SETTING DASHBOARD ENGINE ====================
+        function applyDashboardSettings() {
+            const isDark = localStorage.getItem("darkToggle") === "true";
+            document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+
+            const temaWarna = localStorage.getItem("themeColor") || "#3b82f6";
+            document.documentElement.style.setProperty('--primary', temaWarna);
+            document.documentElement.style.setProperty('--primary-grad', `linear-gradient(135deg, ${temaWarna}, ${temaWarna}dd)`);
+
+            const isAnimationOn = localStorage.getItem("animasiToggle") !== "false"; 
+            document.documentElement.setAttribute("data-animation", isAnimationOn ? "on" : "off");
+
+            const isCompact = localStorage.getItem("compactToggle") === "true";
+            if (isCompact) { document.body.classList.add("compact"); } else { document.body.classList.remove("compact"); }
+
+            // Tampilkan/Sembunyikan widget sesuai switch pengaturan
+            if(document.getElementById("widget-cuaca")) document.getElementById("widget-cuaca").style.display = localStorage.getItem("wCuaca") !== "false" ? "flex" : "none";
+            if(document.getElementById("widget-jam")) document.getElementById("widget-jam").style.display = localStorage.getItem("wJam") !== "false" ? "block" : "none";
+            if(document.getElementById("widget-progress")) document.getElementById("widget-progress").style.display = localStorage.getItem("wProgressCircle") !== "false" ? "flex" : "none";
+            if(document.getElementById("widget-statistik")) document.getElementById("widget-statistik").style.display = localStorage.getItem("wStatistikMingguan") !== "false" ? "grid" : "none";
+            if(document.getElementById("widget-xp")) {
+                const showXp = localStorage.getItem("wXPCard") !== "false";
+                document.getElementById("widget-xp").style.display = showXp ? "flex" : "none";
+                if(document.getElementById("widget-xp-level")) document.getElementById("widget-xp-level").style.display = showXp ? "flex" : "none";
+            }
         }
 
         function update() {
             save();
             renderTasks();
-
             let done = tasks.filter(t => t.done).length;
             let pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
-
             document.getElementById("bar").style.width = pct + "%";
             document.getElementById("barPercentText").innerText = pct + "%";
             document.getElementById("heroPercent").innerText = pct + "%";
-
             renderCharts();
             renderHistory();
             renderAnalysis(pct);
             updateStats();
 
-            // Kirim data ke Firebase biar HP & Laptop sinkron
-            fetch(dbUrl, {
-                method: "PUT",
-                body: JSON.stringify({ tasks, xp, history })
-            }).catch(err => console.log("Firebase push error:", err));
+            fetch(dbUrl, { method: "PUT", body: JSON.stringify({ tasks, xp, history }) }).catch(err => console.log("Firebase push error:", err));
         }
 
-        // --- SCRIPT REALTIME SINKRONISASI FIREBASE ---
         const dbUrl = "https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json";
 
-        // Ambil data otomatis dari Firebase
         function loadDataFromFirebase() {
             fetch(dbUrl)
                 .then(res => res.json())
@@ -923,8 +881,6 @@
                         if (data.tasks) tasks = data.tasks;
                         if (data.xp) xp = data.xp;
                         if (data.history) history = data.history;
-                        
-                        // Render ulang setelah data ditarik
                         renderTasks();
                         let done = tasks.filter(t => t.done).length;
                         let pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
@@ -935,22 +891,21 @@
                         renderHistory();
                         renderAnalysis(pct);
                         updateStats();
+                        
+                        // Exec antena sesudah Firebase rampung load
+                        applyDashboardSettings();
                     }
                 }).catch(err => console.log("Firebase load error:", err));
         }
 
-        document.getElementById("taskInput").addEventListener("keypress", e => {
-            if (e.key === "Enter") addTask();
-        });
+        document.getElementById("taskInput").addEventListener("keypress", e => { if (e.key === "Enter") addTask(); });
 
-        // Jalankan interval jam & cek Firebase berkala tiap 3 detik
         setInterval(updateClock, 1000);
         setInterval(loadDataFromFirebase, 3000);
 
-        // Inisialisasi awal saat web dibuka
         updateClock();
         buildCalendarMatrix();
-        loadDataFromFirebase(); // Load data online dulu pertama kali
+        loadDataFromFirebase();
     </script>
 </body>
 </html>
