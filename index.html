@@ -722,6 +722,19 @@
             history[todayKey] = pct;
             localStorage.setItem("history_tracker", JSON.stringify(history));
             localStorage.setItem("xp_tracker", xp);
+        
+            // Kirim ke Firebase dengan struktur terorganisir per tanggal
+            const updatePayload = {
+                [`tasks/${todayKey}`]: tasks,
+                `history`: history,
+                `xp`: xp,
+                `nama`: currentUserName
+            };
+        
+            fetch("https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/.json", { 
+                method: "PATCH", // Menggunakan PATCH agar tidak menimpa node lain
+                body: JSON.stringify(updatePayload) 
+            }).catch(err => console.log("Firebase push error:", err));
         }
 
         function focusInput() {
@@ -906,14 +919,27 @@
             document.getElementById("bestStreak").innerText = `Best: ${streak} Hari`;
         }
 
-        function buildCalendarMatrix() {
+       function buildCalendarMatrix() {
             const matrixBox = document.getElementById("calendarMatrix");
             matrixBox.innerHTML = "";
-            for(let i=1; i<=28; i++){
+            
+            // Asumsi kalender menampilkan 28 hari ke belakang atau rentang tanggal tertentu
+            // Contoh sederhana: mapping progress berdasarkan format key '2026-06-XX'
+            for(let i = 1; i <= 28; i++) {
+                // Pad nomor hari menjadi 2 digit (misal: 04, 12)
+                let dayString = String(i).padStart(2, '0');
+                // Sesuaikan dengan bulan berjalan yang sedang lu track, contoh Juni 2026:
+                let checkKey = `2026-06-${dayString}`; 
+                
+                let progress = history[checkKey] || 0;
                 let stateClass = "";
-                if(i > 8 && i < 12) stateClass = "active-50";
-                if(i >= 12 && i < 25) stateClass = "active-100";
-                if(i === 25) stateClass = "active-50"; 
+                
+                if (progress === 100) {
+                    stateClass = "active-100";
+                } else if (progress >= 50) {
+                    stateClass = "active-50";
+                }
+                
                 matrixBox.innerHTML += `<div class="calendar-day ${stateClass}">${i}</div>`;
             }
         }
@@ -972,40 +998,44 @@
             renderAnalysis(pct);
             updateStats();
 
-            fetch(dbUrl, { method: "PUT", body: JSON.stringify({ tasks, xp, history, nama: currentUserName }) }).catch(err => console.log("Firebase push error:", err));
-        }
 
         const dbUrl = "https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json";
 
         function loadDataFromFirebase() {
-            fetch(dbUrl)
-                .then(res => res.json())
-                .then(data => {
-                    if (data) {
-                        if (data.tasks) tasks = data.tasks;
-                        if (data.xp) xp = data.xp;
-                        if (data.history) history = data.history;
-                        
-                        // Tarik nama dari Firebase jika ada, kalau kosong pakai localStorage
-                        let savedName = data.nama || localStorage.getItem("inputNama") || "Umar";
-                        applyDynamicName(savedName);
-
-                        renderTasks();
-                        let done = tasks.filter(t => t.done).length;
-                        let pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
-                        document.getElementById("bar").style.width = pct + "%";
-                        document.getElementById("barPercentText").innerText = pct + "%";
-                        document.getElementById("heroPercent").innerText = pct + "%";
-                        renderCharts();
-                        renderHistory();
-                        renderAnalysis(pct);
-                        updateStats();
-                        
-                        applyDashboardSettings();
+        fetch("https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/.json")
+            .then(res => res.json())
+            .then(data => {
+                if (data) {
+                    // Ambil history & XP global
+                    if (data.history) history = data.history;
+                    if (data.xp) xp = data.xp;
+                    
+                    // Ambil task khusus hari ini, jika belum ada buat dari defaultTasks
+                    if (data.tasks && data.tasks[todayKey]) {
+                        tasks = data.tasks[todayKey];
+                    } else {
+                        tasks = defaultTasks.map(t => ({ name: t, done: false }));
                     }
-                }).catch(err => console.log("Firebase load error:", err));
-        }
-
+                    
+                    let savedName = data.nama || localStorage.getItem("inputNama") || "Umar";
+                    applyDynamicName(savedName);
+    
+                    // Jalankan fungsi render sisa dashboard
+                    renderTasks();
+                    let done = tasks.filter(t => t.done).length;
+                    let pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+                    document.getElementById("bar").style.width = pct + "%";
+                    document.getElementById("barPercentText").innerText = pct + "%";
+                    document.getElementById("heroPercent").innerText = pct + "%";
+                    renderCharts();
+                    renderHistory();
+                    renderAnalysis(pct);
+                    updateStats();
+                    applyDashboardSettings();
+                    buildCalendarMatrix(); // Pindahkan ke sini agar ikut ter-update otomatis
+                }
+            }).catch(err => console.log("Firebase load error:", err));
+    }
         document.getElementById("taskInput").addEventListener("keypress", e => { if (e.key === "Enter") addTask(); });
 
         setInterval(updateClock, 1000);
