@@ -715,6 +715,7 @@
             updateClock();
         }
 
+        // 1. PERBAIKAN FUNGSI SAVE (Menggunakan format bracket standard agar aman dari syntax error)
         function save() {
             localStorage.setItem("tasks_" + todayKey, JSON.stringify(tasks));
             let done = tasks.filter(t => t.done).length;
@@ -723,20 +724,19 @@
             localStorage.setItem("history_tracker", JSON.stringify(history));
             localStorage.setItem("xp_tracker", xp);
         
-            // Kirim ke Firebase dengan struktur terorganisir per tanggal
-            const updatePayload = {
-                [`tasks/${todayKey}`]: tasks,
-                `history`: history,
-                `xp`: xp,
-                `nama`: currentUserName
-            };
+            // Menggunakan format aman tanpa backtick
+            let updatePayload = {};
+            updatePayload["tasks/" + todayKey] = tasks;
+            updatePayload["history"] = history;
+            updatePayload["xp"] = xp;
+            updatePayload["nama"] = currentUserName;
         
             fetch("https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/.json", { 
-                method: "PATCH", // Menggunakan PATCH agar tidak menimpa node lain
+                method: "PATCH", 
                 body: JSON.stringify(updatePayload) 
             }).catch(err => console.log("Firebase push error:", err));
         }
-
+        
         function focusInput() {
             const wrapper = document.getElementById("inputWrapper");
             wrapper.style.display = wrapper.style.display === "flex" ? "none" : "flex";
@@ -854,39 +854,29 @@
         }
 
         function calcStreak() {
-            // 1. Urutkan tanggal dari yang paling lama ke paling baru
             let dates = Object.keys(history).sort();
             let s = 0;
     
-            // 2. Ambil tanggal hari ini secara dinamis (Format: YYYY-MM-DD)
             const tzoffset = (new Date()).getTimezoneOffset() * 60000;
             const currentTodayKey = (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
 
-            // 3. Jalankan loop mundur dari hari paling baru (hari ini) ke belakang
             for (let i = dates.length - 1; i >= 0; i--) {
-            const dateKey = dates[i];
-            const progress = history[dateKey] || 0;
+                const dateKey = dates[i];
+                const progress = history[dateKey] || 0;
 
-            // KASUS KHUSUS HARI INI: 
-            // Kalau hari ini baru mulai (masih 0% atau belum 100%), 
-            // JANGAN langsung merusak streak hari-hari kemarin. Skip aja dulu.
-            if (dateKey === currentTodayKey && progress < 100) {
-            continue;
-        }
+                if (dateKey === currentTodayKey && progress < 100) {
+                    continue;
+                }
 
-            // KONDISI UTAMA STREAK:
-            // Harus 100% tepat untuk bisa dihitung masuk streak
-            if (progress === 100) {
-                s++;
-            } else {
-            // Begitu ketemu yang DI BAWAH 100%, streak langsung PUTUS (break)
-            break;
-        }
-    }
+                if (progress === 100) {
+                    s++;
+                } else {
+                    break;
+                }
+            }
 
-    // 4. Tampilkan hasilnya ke dashboard
-    document.getElementById("streak").innerText = s + " Hari";
-    return s;
+            document.getElementById("streak").innerText = s + " Hari";
+            return s;
         }
 
         function renderAnalysis(pct) {
@@ -919,24 +909,20 @@
             document.getElementById("bestStreak").innerText = `Best: ${streak} Hari`;
         }
 
-       function buildCalendarMatrix() {
+        function buildCalendarMatrix() {
             const matrixBox = document.getElementById("calendarMatrix");
             matrixBox.innerHTML = "";
             
-            // Asumsi kalender menampilkan 28 hari ke belakang atau rentang tanggal tertentu
-            // Contoh sederhana: mapping progress berdasarkan format key '2026-06-XX'
             for(let i = 1; i <= 28; i++) {
-                // Pad nomor hari menjadi 2 digit (misal: 04, 12)
                 let dayString = String(i).padStart(2, '0');
-                // Sesuaikan dengan bulan berjalan yang sedang lu track, contoh Juni 2026:
-                let checkKey = `2026-06-${dayString}`; 
+                let checkKey = `2026-06-${dayString}`;
                 
                 let progress = history[checkKey] || 0;
                 let stateClass = "";
                 
                 if (progress === 100) {
                     stateClass = "active-100";
-                } else if (progress >= 50) {
+                } else if (progress >= 1) {
                     stateClass = "active-50";
                 }
                 
@@ -985,6 +971,7 @@
             renderCharts();
         }
 
+        // 2. PERBAIKAN: Fungsi update() sekarang ditutup dengan benar di sini
         function update() {
             save();
             renderTasks();
@@ -997,51 +984,46 @@
             renderHistory();
             renderAnalysis(pct);
             updateStats();
-
-
-        const dbUrl = "https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json";
+        } // <-- Kurung tutup penyelemat data lu
 
         function loadDataFromFirebase() {
-        fetch("https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/.json")
-            .then(res => res.json())
-            .then(data => {
-                if (data) {
-                    // Ambil history & XP global
-                    if (data.history) history = data.history;
-                    if (data.xp) xp = data.xp;
-                    
-                    // Ambil task khusus hari ini, jika belum ada buat dari defaultTasks
-                    if (data.tasks && data.tasks[todayKey]) {
-                        tasks = data.tasks[todayKey];
-                    } else {
-                        tasks = defaultTasks.map(t => ({ name: t, done: false }));
+            fetch("https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/.json")
+                .then(res => res.json())
+                .then(data => {
+                    if (data) {
+                        if (data.history) history = data.history;
+                        if (data.xp) xp = data.xp;
+                        
+                        if (data.tasks && data.tasks[todayKey]) {
+                            tasks = data.tasks[todayKey];
+                        } else {
+                            tasks = defaultTasks.map(t => ({ name: t, done: false }));
+                        }
+                        
+                        let savedName = data.nama || localStorage.getItem("inputNama") || "Umar";
+                        applyDynamicName(savedName);
+        
+                        renderTasks();
+                        let done = tasks.filter(t => t.done).length;
+                        let pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+                        document.getElementById("bar").style.width = pct + "%";
+                        document.getElementById("barPercentText").innerText = pct + "%";
+                        document.getElementById("heroPercent").innerText = pct + "%";
+                        renderCharts();
+                        renderHistory();
+                        renderAnalysis(pct);
+                        updateStats();
+                        applyDashboardSettings();
+                        buildCalendarMatrix(); 
                     }
-                    
-                    let savedName = data.nama || localStorage.getItem("inputNama") || "Umar";
-                    applyDynamicName(savedName);
-    
-                    // Jalankan fungsi render sisa dashboard
-                    renderTasks();
-                    let done = tasks.filter(t => t.done).length;
-                    let pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
-                    document.getElementById("bar").style.width = pct + "%";
-                    document.getElementById("barPercentText").innerText = pct + "%";
-                    document.getElementById("heroPercent").innerText = pct + "%";
-                    renderCharts();
-                    renderHistory();
-                    renderAnalysis(pct);
-                    updateStats();
-                    applyDashboardSettings();
-                    buildCalendarMatrix(); // Pindahkan ke sini agar ikut ter-update otomatis
-                }
-            }).catch(err => console.log("Firebase load error:", err));
-    }
+                }).catch(err => console.log("Firebase load error:", err));
+        }
+
         document.getElementById("taskInput").addEventListener("keypress", e => { if (e.key === "Enter") addTask(); });
 
         setInterval(updateClock, 1000);
         setInterval(loadDataFromFirebase, 3000);
 
-        // Ambil nama lokal sementara nunggu firebase terhubung
         applyDynamicName(currentUserName);
         updateClock();
         buildCalendarMatrix();
