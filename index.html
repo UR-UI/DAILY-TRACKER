@@ -669,17 +669,22 @@
     </div>
 
     <!-- CORE BUSINESS LOGIC -->
-    <script>
+   <script>
         let currentUserName = localStorage.getItem("inputNama") || "Umar";
-        const todayKey = new Date().toISOString().split("T")[0];
+        
+        // Menggunakan timezone lokal agar key tanggal akurat sesuai HP/Laptop lu
+        const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+        const todayKey = (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
 
         document.getElementById("today").innerHTML = new Date().toLocaleDateString("id-ID", { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
 
+        // Template list task default
         const defaultTasks = [
             "Bangun tepat waktu", "Olahraga", "Membaca 10 halaman", "Belajar fokus",
             "Minum air cukup", "Merapikan kamar", "Tidur tepat waktu", "Belajar coding 30 menit", "Jurnal malam"
         ];
 
+        // Inisialisasi awal data lokal
         let tasks = JSON.parse(localStorage.getItem("tasks_" + todayKey) || "[]");
         if (tasks.length === 0) {
             tasks = defaultTasks.map(t => ({ name: t, done: false }));
@@ -688,7 +693,6 @@
         let history = JSON.parse(localStorage.getItem("history_tracker") || "{}");
         let xp = parseInt(localStorage.getItem("xp_tracker") || "0");
 
-        // FUNGSI TOGGLE MENU SIDEBAR HP
         function toggleSidebar() {
             const sidebar = document.getElementById("sidebarContainer");
             const overlay = document.getElementById("sidebarOverlay");
@@ -696,26 +700,19 @@
             overlay.classList.toggle("active");
         }
 
-        // UPDATE ELEMEN NAMA SECARA DINAMIS
         function applyDynamicName(name) {
             if(!name) name = "Umar";
             currentUserName = name;
-            
-            // Perbarui teks nama di dashboard
             document.getElementById("profileName").innerText = name;
             document.getElementById("sidebarBrandName").innerText = name + " Edition";
             document.getElementById("quoteAuthor").innerText = "– " + name;
-            
-            // Ambil huruf pertama untuk inisial Avatar
             const initial = name.charAt(0).toUpperCase();
             document.getElementById("profileAvatar").innerText = initial;
             document.getElementById("topbarAvatar").innerText = initial;
-            
-            // Perbarui ucapan selamat waktu jalan
             updateClock();
         }
 
-        // 1. PERBAIKAN FUNGSI SAVE (Menggunakan format bracket standard agar aman dari syntax error)
+        // AMAN & TERSTRUKTUR: Menyimpan ke Firebase dengan struktur tasks/YYYY-MM-DD
         function save() {
             localStorage.setItem("tasks_" + todayKey, JSON.stringify(tasks));
             let done = tasks.filter(t => t.done).length;
@@ -723,20 +720,19 @@
             history[todayKey] = pct;
             localStorage.setItem("history_tracker", JSON.stringify(history));
             localStorage.setItem("xp_tracker", xp);
-        
-            // Menggunakan format aman tanpa backtick
+
             let updatePayload = {};
-            updatePayload["tasks/" + todayKey] = tasks;
+            updatePayload["tasks/" + todayKey] = tasks; // Data disimpan rapi di dalam sub-folder tanggalnya
             updatePayload["history"] = history;
             updatePayload["xp"] = xp;
             updatePayload["nama"] = currentUserName;
-        
+
             fetch("https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/.json", { 
                 method: "PATCH", 
                 body: JSON.stringify(updatePayload) 
             }).catch(err => console.log("Firebase push error:", err));
         }
-        
+
         function focusInput() {
             const wrapper = document.getElementById("inputWrapper");
             wrapper.style.display = wrapper.style.display === "flex" ? "none" : "flex";
@@ -751,7 +747,7 @@
             tasks.push({ name: v, done: false });
             document.getElementById("taskInput").value = "";
             document.getElementById("inputWrapper").style.display = "none";
-            update();
+            update(); // Memicu save() dan render ulang
         }
 
         function toggleTask(i) {
@@ -759,7 +755,7 @@
             tasks[i].done = !tasks[i].done;
             if (!before && tasks[i].done) xp += 10;
             if (before && !tasks[i].done) xp = Math.max(0, xp - 10);
-            update();
+            update(); // Memicu save() dan render ulang
         }
 
         function delTask(i) {
@@ -853,25 +849,27 @@
             document.getElementById("history").innerHTML = html;
         }
 
+        // FIX STREAK: Logika pengecekan tanggal mundur secara berurutan tanpa diskip
         function calcStreak() {
-            let dates = Object.keys(history).sort();
             let s = 0;
-    
-            const tzoffset = (new Date()).getTimezoneOffset() * 60000;
-            const currentTodayKey = (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
+            let checkDate = new Date(Date.now() - tzoffset); // Mulai cek dari hari ini
+            
+            // Jika progres hari ini belum 100%, kita mulai pengecekan mundurnya dari HARI KEMARIN
+            // Supaya streak hari kemarin nggak hangus cuma gara-gara hari ini belum kelar semua
+            let todayProgress = history[todayKey] || 0;
+            if (todayProgress < 100) {
+                checkDate.setDate(checkDate.getDate() - 1);
+            }
 
-            for (let i = dates.length - 1; i >= 0; i--) {
-                const dateKey = dates[i];
-                const progress = history[dateKey] || 0;
-
-                if (dateKey === currentTodayKey && progress < 100) {
-                    continue;
-                }
+            while (true) {
+                let checkKey = checkDate.toISOString().split('T')[0];
+                let progress = history[checkKey] || 0;
 
                 if (progress === 100) {
                     s++;
+                    checkDate.setDate(checkDate.getDate() - 1); // Mundur 1 hari ke belakang
                 } else {
-                    break;
+                    break; // Begitu ketemu tanggal yang bolong atau < 100%, streak langsung putus
                 }
             }
 
@@ -913,6 +911,7 @@
             const matrixBox = document.getElementById("calendarMatrix");
             matrixBox.innerHTML = "";
             
+            // Loop khusus bulan Juni 2026 (Tanggal 1 sampai 28)
             for(let i = 1; i <= 28; i++) {
                 let dayString = String(i).padStart(2, '0');
                 let checkKey = `2026-06-${dayString}`;
@@ -967,11 +966,10 @@
                 document.getElementById("widget-xp").style.display = showXp ? "flex" : "none";
                 if(document.getElementById("widget-xp-level")) document.getElementById("widget-xp-level").style.display = showXp ? "flex" : "none";
             }
-
             renderCharts();
         }
 
-        // 2. PERBAIKAN: Fungsi update() sekarang ditutup dengan benar di sini
+        // Fungsi update lokal yang dipanggil setiap kali ada perubahan data (Cepat dan Ringan)
         function update() {
             save();
             renderTasks();
@@ -984,8 +982,10 @@
             renderHistory();
             renderAnalysis(pct);
             updateStats();
-        } // <-- Kurung tutup penyelemat data lu
+            buildCalendarMatrix();
+        }
 
+        // LOAD ON STARTUP: Hanya berjalan SATU KALI saat halaman pertama dimuat
         function loadDataFromFirebase() {
             fetch("https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/.json")
                 .then(res => res.json())
@@ -994,40 +994,37 @@
                         if (data.history) history = data.history;
                         if (data.xp) xp = data.xp;
                         
+                        // FIX PERGANTIAN HARI: Ambil data spesifik sesuai tanggal hari ini
                         if (data.tasks && data.tasks[todayKey]) {
                             tasks = data.tasks[todayKey];
                         } else {
+                            // Jika hari berganti dan di database belum ada, buat list default baru kosongan (uncheck)
                             tasks = defaultTasks.map(t => ({ name: t, done: false }));
                         }
                         
                         let savedName = data.nama || localStorage.getItem("inputNama") || "Umar";
                         applyDynamicName(savedName);
-        
-                        renderTasks();
-                        let done = tasks.filter(t => t.done).length;
-                        let pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
-                        document.getElementById("bar").style.width = pct + "%";
-                        document.getElementById("barPercentText").innerText = pct + "%";
-                        document.getElementById("heroPercent").innerText = pct + "%";
-                        renderCharts();
-                        renderHistory();
-                        renderAnalysis(pct);
-                        updateStats();
+                        
+                        // Sync data awal ke dashboard
+                        update();
                         applyDashboardSettings();
-                        buildCalendarMatrix(); 
                     }
                 }).catch(err => console.log("Firebase load error:", err));
         }
 
         document.getElementById("taskInput").addEventListener("keypress", e => { if (e.key === "Enter") addTask(); });
 
+        // Interval jam lokal tetap jalan setiap 1 detik
         setInterval(updateClock, 1000);
-        setInterval(loadDataFromFirebase, 3000);
 
+        // ==========================================
+        // Sesuai saran lu: POLLING FETCH 3 DETIK DIHAPUS TOTAL BIAR GA OVERWRITE DATA!
+        // ==========================================
+
+        // Eksekusi boot awal tracker
         applyDynamicName(currentUserName);
         updateClock();
-        buildCalendarMatrix();
-        loadDataFromFirebase();
+        loadDataFromFirebase(); // Panggil sekali pas startup
     </script>
 </body>
 </html>
