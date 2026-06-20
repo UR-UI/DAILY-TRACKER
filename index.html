@@ -913,12 +913,23 @@
             let vals = Object.values(history);
             let avg = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
             document.getElementById("avg30").innerText = avg + "%";
+         
+            // LOGIKA RANK MOBILE LEGENDS (REFRESH RATE: 3 BULAN IMMORTAL)
             let ach = "-";
-            if (streak >= 365) ach = "Monster"; else if (streak >= 100) ach = "Elite"; else if (streak >= 30) ach = "Warrior"; else if (streak >= 7) ach = "Consistent"; else if (streak >= 3) ach = "Rookie";
+            if (streak >= 90)       ach = "Mythical Immortal 🌟";
+            else if (streak >= 75)  ach = "Mythical Glory 🔥";
+            else if (streak >= 60)  ach = "Mythical Honor ✨";
+            else if (streak >= 45)  ach = "Mythic 🟣";
+            else if (streak >= 30)  ach = "Legend 🟠";
+            else if (streak >= 20)  ach = "Epic 🟢";
+            else if (streak >= 15)  ach = "Grandmaster 🔵";
+            else if (streak >= 10)  ach = "Master 🟡";
+            else if (streak >= 5)   ach = "Elite ⚪";
+            else if (streak >= 3)   ach = "Warrior 🟤";
+
             document.getElementById("achievement").innerText = ach;
             document.getElementById("bestStreak").innerText = `Best: ${streak} Hari`;
         }
-
         function buildCalendarMatrix() {
             const matrixBox = document.getElementById("calendarMatrix");
             matrixBox.innerHTML = "";
