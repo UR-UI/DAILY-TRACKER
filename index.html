@@ -551,9 +551,31 @@
             let html = "<table class='history-table'>";
             keys.forEach(k => {
                 let currentPct = history[k] || 0;
-                let classColor = currentPct >= 80 ? 'high' : currentPct >= 50 ? 'mid' : 'low';
+                
+                // FIX LOGIKA WARNA: Pakai inline style kuat biar warnanya tidak nyaru atau ketimpa merah semua
+                let bgStyle = "";
+                let textColor = "";
+                if (currentPct >= 80) {
+                    bgStyle = "background: rgba(16, 185, 129, 0.15) !important;"; // Hijau sukses
+                    textColor = "color: #10b981 !important;";
+                } else if (currentPct >= 50) {
+                    bgStyle = "background: rgba(245, 158, 11, 0.15) !important;"; // Kuning/Oranye hangat
+                    textColor = "color: #f59e0b !important;";
+                } else {
+                    bgStyle = "background: rgba(239, 68, 68, 0.15) !important;";  // Merah
+                    textColor = "color: #ef4444 !important;";
+                }
+
                 let formattedKeyDate = new Date(k).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' });
-                html += `<tr><td style="font-weight:500;"><i class="fa-regular fa-calendar-check" style="margin-right:6px;"></i> ${formattedKeyDate}</td><td style="text-align:right;"><span class="pills-pct ${classColor}">${currentPct}%</span></td></tr>`;
+                html += `
+                <tr>
+                    <td style="font-weight:600; padding: 14px 8px;"><i class="fa-regular fa-calendar-check" style="margin-right:8px; color: #3b82f6 !important;"></i> ${formattedKeyDate}</td>
+                    <td style="text-align:right; padding: 14px 8px;">
+                        <span class="pills-pct" style="${bgStyle} ${textColor} font-weight: 700; padding: 6px 10px; border-radius: 8px; display: inline-block;">
+                            ${currentPct}%
+                        </span>
+                    </td>
+                </tr>`;
             });
             html += "</table>";
             document.getElementById("history").innerHTML = html;
