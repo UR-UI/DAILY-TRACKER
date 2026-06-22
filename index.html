@@ -125,6 +125,7 @@
 </head>
     
 <body>
+
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <div class="sidebar-container" id="sidebarContainer">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">
@@ -146,7 +147,12 @@
 
     <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 25px 25px 5px 25px; max-width: 1400px; margin: 0 auto;">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <div class="avatar" id="topbarAvatar" onclick="toggleSidebar()" style="cursor: pointer; width: 42px; height: 42px; font-size: 1.1rem;">U</div>
+            <button onclick="toggleSidebar()" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; height: 42px;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            
+            <div class="avatar" id="topbarAvatar" onclick="toggleSidebar()" style="cursor: pointer; width: 42px; height: 42px; font-size: 1.1rem; flex-shrink: 0;">U</div>
+            
             <div>
                 <h2 id="greeting" style="font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 6px;">☀️ Selamat Pagi, Umar!</h2>
                 <div style="display: flex; gap: 10px; font-size: 0.78rem; color: var(--text-muted); font-weight: 500; margin-top: 2px;">
@@ -156,6 +162,7 @@
                 </div>
             </div>
         </div>
+        
         <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
             <div class="clock-time" id="widget-jam" style="font-size: 1.4rem; font-weight: 800; color: var(--hero-blue);">00 : 00 : 00</div>
             <span id="timeRemaining" style="font-size: 0.72rem; color: var(--target-red); font-weight: 600; margin-top: 2px;">Sisa hari ini: --</span>
