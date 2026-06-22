@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Tracker - Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet\" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ==================== MULTICOLOR PALETTE ENGINE ==================== */
         :root {
@@ -581,24 +582,23 @@
                     </td>
                 </tr>`;
             });
-        }6
+        }
             html += "</table>";
             document.getElementById("history").innerHTML = html;
         
         function calcStreak() {
             let s = 0;
             let checkDate = new Date(Date.now() - tzoffset);
-        }
-            
+        
             let todayProgress = history[todayKey] || 0;
             if (todayProgress < 100) {
                 checkDate.setDate(checkDate.getDate() - 1);
             }
-
+        
             while (true) {
                 let checkKey = checkDate.toISOString().split('T')[0];
                 let progress = history[checkKey] || 0;
-
+        
                 if (progress === 100) {
                     s++;
                     checkDate.setDate(checkDate.getDate() - 1);
@@ -606,9 +606,10 @@
                     break;
                 }
             }
-
-        {document.getElementById("streak").innerText = s + " Hari";
-                 }
+        
+            document.getElementById("streak").innerText = s + " Hari";
+            return s;
+        }
 
         function getLevel() {
             if (xp >= 1500) return { title: "Elite", next: 3000 };
