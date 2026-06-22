@@ -7,7 +7,94 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
    <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        /* HERO INFO BOX */
+        .hero-info-box{
+            display:flex;
+            align-items:center;
+            gap:18px;
+            background:rgba(255,255,255,.10);
+            padding:18px;
+            border-radius:22px;
+            backdrop-filter:blur(12px);
+            min-width:260px;
+            transition:.3s;
+        }
+        
+        .hero-info-box:hover{
+            background:rgba(255,255,255,.15);
+        }
+        
+        .hero-icon{
+            width:64px;
+            height:64px;
+            border-radius:18px;
+            background:rgba(255,255,255,.12);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:26px;
+        }
+        
+        .hero-info-text{
+            display:flex;
+            flex-direction:column;
+        }
+        
+        .hero-label{
+            font-size:17px;
+            opacity:.8;
+        }
+        
+        .hero-value{
+            font-size:20px;
+            font-weight:700;
+        }
+        
+        /* quote */
+        .hero-quote{
+            margin-top:25px;
+            width:max-content;
+            background:rgba(255,255,255,.12);
+            padding:18px 28px;
+            border-radius:22px;
+            display:flex;
+            align-items:center;
+            gap:15px;
+            font-size:20px;
+        }
+        
+        .hero-quote i{
+            font-size:24px;
+        }
+        
+        /* tombol hapus merah */
+        .btn-del{
+            width:34px;
+            height:34px;
+            border:none;
+            background:rgba(239,68,68,.12);
+            border-radius:50%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            cursor:pointer;
+            transition:.3s;
+        }
+        
+        .btn-del i{
+            color:#ef4444 !important;
+        }
+        
+        .btn-del:hover{
+            background:#ef4444;
+        }
+        
+        .btn-del:hover i{
+            color:white !important;
+        }
+        
         /* ==================== MULTICOLOR PALETTE ENGINE ==================== */
         :root {
             --bg-main: #f4f7fc;
@@ -126,6 +213,60 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 </head>
 <body>
 
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+    <div class="hero-info-box">
+        <div class="hero-icon">
+            <i class="fa-solid fa-calendar"></i>
+        </div>
+
+        <div class="hero-info-text">
+            <div class="hero-label">
+                Hari Ke
+            </div>
+
+            <div class="hero-value" id="dayInfo">
+                Day 173 / 365
+            </div>
+        </div>
+    </div>
+
+
+    <div class="hero-info-box">
+        <div class="hero-icon">
+            <i class="fa-solid fa-layer-group"></i>
+        </div>
+
+        <div class="hero-info-text">
+            <div class="hero-label">
+                Minggu Ke
+            </div>
+
+            <div class="hero-value" id="weekInfo">
+                Week 25
+            </div>
+        </div>
+    </div>
+
+
+        <div class="hero-info-box">
+            <div class="hero-icon">
+                <i class="fa-regular fa-clock"></i>
+            </div>
+    
+            <div class="hero-info-text">
+                <div class="hero-label">
+                    Sisa Hari Ini
+                </div>
+    
+                <div class="hero-value" id="timeRemaining">
+                    4 jam 11 menit
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    
     <div class="topbar">
         <div style="display: flex; align-items: center; gap: 12px;">
             <button class="btn" onclick="toggleSidebar()" style="padding: 6px 10px; background: var(--bg-main);"><i class="fa-solid fa-bars"></i></button>
