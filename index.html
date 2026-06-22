@@ -546,47 +546,36 @@
         }
 
                function renderHistory() {
-                let keys = Object.keys(history).sort().reverse().slice(0, 4);
-                if(keys.length === 0) keys = [todayKey];
-                let html = "<table class='history-table' style='width:100%; border-collapse:collapse;'>";
+            let keys = Object.keys(history).sort().reverse().slice(0, 4);
+            if(keys.length === 0) keys = [todayKey];
+            let html = "<table class='history-table'>";
+            keys.forEach(k => {
+                let currentPct = history[k] || 0;
                 
-                keys.forEach(k => {
-                    let currentPct = history[k] || 0;
-                    
-                    // LOGIKA 4 WARNA: Langsung dikunci di variabel teks style murni
-                    let customStyle = "";
-                    if (currentPct === 100) {
-                        customStyle = "background: rgba(16, 185, 129, 0.15) !important; color: #10b981 !important;";
-                    } else if (currentPct >= 70) {
-                        customStyle = "background: rgba(14, 165, 233, 0.15) !important; color: #0ea5e9 !important;";
-                    } else if (currentPct >= 40) {
-                        customStyle = "background: rgba(245, 158, 11, 0.15) !important; color: #f59e0b !important;";
-                    } else {
-                        customStyle = "background: rgba(239, 68, 68, 0.15) !important; color: #ef4444 !important;";
-                    }
-    
-                    let formattedKeyDate = new Date(k).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' });
-                    
-                    html += `
-                    <tr>
-                        <td style="font-weight:600; padding: 14px 8px; border-bottom: 1px solid var(--border);"><i class="fa-regular fa-calendar-check" style="margin-right:8px; color: #3b82f6 !important;"></i> ${formattedKeyDate}</td>
-                        <td style="text-align:right; padding: 14px 8px; border-bottom: 1px solid var(--border);">
-                            <span style="${customStyle} font-weight: 700; padding: 6px 10px; border-radius: 8px; display: inline-block;">
-                                ${currentPct}%
-                            </span>
-                        </td>
-                    </tr>`;
-                });
-                html += "</table>";
-                document.getElementById("history").innerHTML = html;
-            }
+                // PEMBAGIAN 4 WARNA INDIKATOR (Menggunakan inline style kuat)
+                let customStyle = "";
+                if (currentPct === 100) {
+                    // 1. Hijau Mantap (100%)
+                    customStyle = "background: rgba(16, 185, 129, 0.15) !important; color: #10b981 !important;";
+                } else if (currentPct >= 70) {
+                    // 2. Biru Produktif (70% - 99%)
+                    customStyle = "background: rgba(14, 165, 233, 0.15) !important; color: #0ea5e9 !important;";
+                } else if (currentPct >= 40) {
+                    // 3. Kuning Lumayan (40% - 69%)
+                    customStyle = "background: rgba(245, 158, 11, 0.15) !important; color: #f59e0b !important;";
+                } else {
+                    // 4. Merah Kurang (0% - 39%)
+                    customStyle = "background: rgba(239, 68, 68, 0.15) !important; color: #ef4444 !important;";
+                }
 
                 let formattedKeyDate = new Date(k).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' });
                 html += `
                 <tr>
-                    <td style="font-weight:600; padding: 14px 8px;"><i class="fa-regular fa-calendar-check" style="margin-right:8px; color: #3b82f6 !important;"></i> ${formattedKeyDate}</td>
-                    <td style="text-align:right; padding: 14px 8px;">
-                        <span class="pills-pct" style="${bgStyle} ${textColor} font-weight: 700; padding: 6px 10px; border-radius: 8px; display: inline-block;">
+                    <td style="font-weight:500; padding: 12px 8px;">
+                        <i class="fa-regular fa-calendar-check" style="margin-right:6px; color: #3b82f6 !important;"></i> ${formattedKeyDate}
+                    </td>
+                    <td style="text-align:right; padding: 12px 8px;">
+                        <span style="${customStyle} font-weight: 700; padding: 6px 10px; border-radius: 8px; display: inline-block; text-align: center; min-width: 45px;">
                             ${currentPct}%
                         </span>
                     </td>
@@ -595,22 +584,7 @@
             html += "</table>";
             document.getElementById("history").innerHTML = html;
         }
-
-                let formattedKeyDate = new Date(k).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' });
-                html += `
-                <tr>
-                    <td style="font-weight:600; padding: 14px 8px;"><i class="fa-regular fa-calendar-check" style="margin-right:8px; color: #3b82f6 !important;"></i> ${formattedKeyDate}</td>
-                    <td style="text-align:right; padding: 14px 8px;">
-                        <span class="pills-pct" style="${bgStyle} ${textColor} font-weight: 700; padding: 6px 10px; border-radius: 8px; display: inline-block;">
-                            ${currentPct}%
-                        </span>
-                    </td>
-                </tr>`;
-            });
-            html += "</table>";
-            document.getElementById("history").innerHTML = html;
-        }
-
+        
         function calcStreak() {
             let s = 0;
             let checkDate = new Date(Date.now() - tzoffset);
