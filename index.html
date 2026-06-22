@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Tracker - Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   <link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* ===== HERO CARD MINI ===== */
@@ -70,7 +69,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         }
         
         /* tombol hapus merah */
-        
         .btn-del{
             width:34px;
             height:34px;
@@ -135,9 +133,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         }
 
         /* Topbar & Header */
-        .topbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-card); border-bottom: 1px solid var(--border); }
+        .topbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: var(--bg-card); border-bottom: 1px solid var(--border); }
         .profile-area { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .avatar { width: 38px; height: 38px; background: var(--hero-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .avatar { width: 42px; height: 42px; background: var(--hero-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; }
 
         /* Card Base */
         .card { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); padding: 20px; transition: transform 0.2s; position: relative; }
@@ -168,7 +166,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         .btn-primary { background: var(--hero-blue); color: white; }
         .btn-success { background: var(--success-green); color: white; }
         .btn-add-trigger { background: transparent; color: var(--hero-blue); border: 1px dashed var(--hero-blue); width: 100%; justify-content: center; margin-top: 5px; }
-        .btn-del { background: transparent; color: var(--target-red); border: none; cursor: pointer; font-size: 0.9rem; margin-left: 8px; }
 
         /* Grid Statistik */
         .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -181,17 +178,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         .calendar-day.active-100 { background: var(--success-green); color: white; }
         .calendar-day.active-50 { background: rgba(16, 185, 129, 0.3); color: var(--text-main); }
 
-        /* Widget Jam & Info */
-        .clock-widget { text-align: center; padding: 15px 0; border-bottom: 1px solid var(--border); }
-        .clock-time { font-size: 2rem; font-weight: 800; letter-spacing: 1px; color: var(--hero-blue); }
-        
         /* Table History */
         .history-table { width: 100%; border-collapse: collapse; }
         .history-table td { padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .pills-pct { padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; color: white; }
-        .pills-pct.high { background: var(--success-green); }
-        .pills-pct.mid { background: var(--brand-color); }
-        .pills-pct.low { background: var(--target-red); }
 
         /* Sidebar container */
         .sidebar-container { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: var(--bg-card); border-right: 1px solid var(--border); z-index: 1000; transition: left 0.3s ease; padding: 20px; display: flex; flex-direction: column; }
@@ -214,67 +203,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 </head>
 <body>
 
-    <div style="display:flex;flex-direction:column;gap:20px;">
-
-    <div class="hero-info-box">
-        <div class="hero-icon">
-            <i class="fa-solid fa-calendar"></i>
-        </div>
-
-        <div class="hero-info-text">
-            <div class="hero-label">
-                Hari Ke
-            </div>
-
-            <div class="hero-value" id="dayInfo">
-                Day 173 / 365
-            </div>
-        </div>
-    </div>
-
-
-    <div class="hero-info-box">
-        <div class="hero-icon">
-            <i class="fa-solid fa-layer-group"></i>
-        </div>
-
-        <div class="hero-info-text">
-            <div class="hero-label">
-                Minggu Ke
-            </div>
-
-            <div class="hero-value" id="weekInfo">
-                Week 25
-            </div>
-        </div>
-    </div>
-
-
-        <div class="hero-info-box">
-            <div class="hero-icon">
-                <i class="fa-regular fa-clock"></i>
-            </div>
-    
-            <div class="hero-info-text">
-                <div class="hero-label">
-                    Sisa Hari Ini
-                </div>
-    
-                <div class="hero-value" id="timeRemaining">
-                    4 jam 11 menit
-                </div>
-            </div>
-        </div>
-    
-    </div>
-    
     <div class="topbar">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <button class="btn" onclick="toggleSidebar()" style="padding: 6px 10px; background: var(--bg-main);"><i class="fa-solid fa-bars"></i></button>
-            <h2 id="greeting" style="font-size: 1.1rem; font-weight: 700;">☀️ Selamat Pagi, Umar!</h2>
+            <button class="btn" onclick="toggleSidebar()" style="padding: 8px 12px; background: var(--bg-main); height: 42px;"><i class="fa-solid fa-bars"></i></button>
+            
+            <div>
+                <h2 id="greeting" style="font-size: 1.2rem; font-weight: 700;">☀️ Selamat Pagi, Umar!</h2>
+                
+                <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.15); padding: 5px 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center; font-size: 0.78rem; font-weight: 600; margin-top: 6px; width: max-content;">
+                    <span id="dayInfo" style="color: var(--text-main);"><i class="fa-solid fa-calendar" style="margin-right: 4px; color: var(--hero-blue);"></i> Day -- / --</span>
+                    <span style="color: var(--border);">|</span>
+                    <span id="weekInfo" style="color: var(--text-main);"><i class="fa-solid fa-layer-group" style="margin-right: 4px; color: var(--chart-purple);"></i> Week --</span>
+                    <span style="color: var(--border);">|</span>
+                    <span id="timeRemaining" style="color: var(--target-red) !important; font-weight: 700;">⏳ -- j -- m lagi</span>
+                </div>
+            </div>
         </div>
-        <div class="profile-area" onclick="toggleSidebar()">
-            <div class="avatar" id="topbarAvatar">U</div>
+        
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="profile-area" onclick="toggleSidebar()">
+                <div class="avatar" id="topbarAvatar">U</div>
+            </div>
         </div>
     </div>
 
@@ -284,17 +233,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             <div class="avatar" id="profileAvatar">U</div>
             <div>
                 <h4 id="profileName">Umar</h4>
-                <span style="font-size: 0.8rem; color: var(--text-muted);" id="dayInfo">Day 0 / 365</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted);" id="dayInfoSidebar">Day 0 / 365</span>
             </div>
         </div>
         <nav style="display: flex; flex-direction: column; flex: 1;">
             <a href="#" class="sidebar-menu-item active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
             <div class="sidebar-menu-item"><i class="fa-solid fa-trophy"></i> Rank<span class="badge-sidebar" id="sidebarBadge">Level -</span></div>
-            <div class="clock-widget">
-                <div class="clock-time" id="widget-jam">00 : 00 : 00</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;" id="weekInfo">Week 0</div>
-                <div style="font-size: 0.75rem; color: var(--target-red); font-weight: 600;" id="timeRemaining">Sisa hari ini: --</div>
-            </div>
             
             <div class="dark-toggle-container">
                 <span style="font-weight: 500; font-size: 0.9rem;"><i class="fa-solid fa-moon"></i> Dark Mode</span>
@@ -384,7 +328,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
                 </div>
 
                 <div class="card">
-                    <div class="card-title" style="color: var(--calendar-teal); margin-bottom: 5px;"><i class="fa-solid fa-calendar-grid-52"></i> Juni 2026 Matrix</div>
+                    <div class="card-title" style="color: var(--calendar-teal); margin-bottom: 5px;"><i class="fa-solid fa-calendar-days"></i> Juni 2026 Matrix</div>
                     <span style="font-size: 0.75rem; color: var(--text-muted);">Konsistensi Tracker Bulan Ini</span>
                     <div class="matrix-grid" id="calendarMatrix"></div>
                 </div>
@@ -413,7 +357,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 
         document.getElementById("today").innerHTML = new Date().toLocaleDateString("id-ID", { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
 
-        // List Template Habit Default (Disimpan sebagai template mentah terpisah)
         const initialDefaultTemplate = [
             "Bangun tepat waktu", "Olahraga", "Membaca 10 halaman", "Belajar fokus",
             "Minum air cukup", "Merapikan kamar", "Tidur tepat waktu", "Belajar coding 30 menit", "Jurnal malam"
@@ -424,15 +367,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             dailyTemplate = [...initialDefaultTemplate];
         }
 
-        // Checklist Progres Hari Ini
         let tasks = JSON.parse(localStorage.getItem("tasks_" + todayKey) || "[]");
         if (tasks.length === 0) {
             tasks = dailyTemplate.map(t => ({ name: t, done: false }));
         }
 
-        // Data Agenda (Reminders)
         let reminders = JSON.parse(localStorage.getItem("reminders_tracker") || "[]");
-
         let history = JSON.parse(localStorage.getItem("history_tracker") || "{}");
         let xp = parseInt(localStorage.getItem("xp_tracker") || "0");
 
@@ -453,17 +393,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             if(!name) name = "Umar";
             currentUserName = name;
             document.getElementById("profileName").innerText = name;
-            document.getElementById("quoteAuthor") ? document.getElementById("quoteAuthor").innerText = "– " + name : null;
             const initial = name.charAt(0).toUpperCase();
             document.getElementById("profileAvatar").innerText = initial;
             document.getElementById("topbarAvatar").innerText = initial;
             updateClock();
         }
 
-        // SAVE DATA KE FIREBASE & LOCAL STORAGE
         function save() {
-
-            console.log("SAVE DIPANGGIL");
             localStorage.setItem("tasks_" + todayKey, JSON.stringify(tasks));
             localStorage.setItem("dailyTemplate_tracker", JSON.stringify(dailyTemplate));
             localStorage.setItem("reminders_tracker", JSON.stringify(reminders));
@@ -475,7 +411,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             localStorage.setItem("history_tracker", JSON.stringify(history));
             localStorage.setItem("xp_tracker", xp);
 
-            // Payload Firebase yang rapi dan terpisah
             let updatePayload = {};
             updatePayload["tasks/" + todayKey] = tasks;
             updatePayload["dailyTemplate"] = dailyTemplate;
@@ -502,18 +437,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             }
         }
 
-        // TAMBAH HABIT BARU (Masuk ke Template Selamanya)
         function addHabitTemplate() {
             let v = document.getElementById("taskInput").value.trim();
             if (!v) return;
-            dailyTemplate.push(v); // Tambah ke template kebiasaan tetap
-            tasks.push({ name: v, done: false }); // Masukin ke hari ini juga
+            dailyTemplate.push(v);
+            tasks.push({ name: v, done: false });
             document.getElementById("taskInput").value = "";
             document.getElementById("inputWrapperHabit").style.display = "none";
+            // FIX UTAMA: Panggil update() setelah array template diubah agar langsung sinkron permanen ke Firebase
             update();
         }
 
-        // TAMBAH AGENDA / DEADLINE BERDASARKAN TANGGAL
         function addUpcomingAgenda() {
             let title = document.getElementById("agendaInputTitle").value.trim();
             let dateVal = document.getElementById("agendaInputDate").value;
@@ -544,7 +478,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             let idx = reminders.findIndex(r => r.id === id);
             if(idx !== -1) {
                 reminders[idx].completed = !reminders[idx].completed;
-                if(reminders[idx].completed) xp += 20; // Agenda ngasih XP lebih gede!
+                if(reminders[idx].completed) xp += 20;
                 else xp = Math.max(0, xp - 20);
                 update();
             }
@@ -554,7 +488,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             if (confirm("Hapus target kebiasaan ini dari daftar harian dan template?")) {
                 let nameToRemove = tasks[i].name;
                 tasks.splice(i, 1);
-                // Hapus dari template kebiasaan biar besok ga muncul lagi
                 dailyTemplate = dailyTemplate.filter(t => t !== nameToRemove);
                 update();
             }
@@ -580,14 +513,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
                     <div style="display: flex; align-items: center; gap: 12px !important; min-width: max-content;">
                         <span class="task-xp" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">+10 XP</span>
                         <button onclick="delTask(${i})" style="display: inline-block !important; background: transparent !important; border: none !important; cursor: pointer !important; padding: 4px 8px !important; visibility: visible !important; opacity: 1 !important; color: #ff0000 !important;">
-                            <i class="fa-solid fa-trash" style="color: #ff0000 !important; fill: #ff0000 !important; font-size: 1rem !important;"></i>
+                            <i class="fa-solid fa-trash" style="color: #ff0000 !important; font-size: 1rem !important;"></i>
                         </button>
                     </div>
                 </div>`;
             });
         }
 
-        // RENDER AGENDA & CEK LIVE ALERT PENGINGAT HARI INI
         function renderAgendaAndAlerts() {
             let container = document.getElementById("agendaContainer");
             let alertBanner = document.getElementById("todayReminderBanner");
@@ -597,15 +529,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             alertList.innerHTML = "";
             
             let hasTodayAlert = false;
-
-            // Urutkan agenda berdasarkan tanggal terdekat
             let sortedAgenda = [...reminders].sort((a,b) => new Date(a.date) - new Date(b.date));
 
             sortedAgenda.forEach(r => {
                 let tDate = new Date(r.date + "T00:00:00");
                 let todayMidnight = new Date(todayKey + "T00:00:00");
                 
-                // Hitung sisa hari (H-1, H-2, dll)
                 let diffTime = tDate - todayMidnight;
                 let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
@@ -628,7 +557,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 
                 if(r.completed) {
                     stateClass = "completed";
-                    badgeText = "Selesai Selesai";
+                    badgeText = "Selesai";
                 }
 
                 let formattedDate = tDate.toLocaleDateString("id-ID", {day: 'numeric', month: 'short'});
@@ -653,7 +582,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 
         function renderCharts() {
             let done = tasks.filter(t => t.done).length;
-            let pending = tasks.length - done;
             let pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
 
             if (heroCircle) heroCircle.destroy();
@@ -690,26 +618,21 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             });
         }
 
-               function renderHistory() {
+        function renderHistory() {
             let keys = Object.keys(history).sort().reverse().slice(0, 4);
             if(keys.length === 0) keys = [todayKey];
             let html = "<table class='history-table'>";
+            
             keys.forEach(k => {
                 let currentPct = history[k] || 0;
-                
-                // PEMBAGIAN 4 WARNA INDIKATOR (Menggunakan inline style kuat)
                 let customStyle = "";
                 if (currentPct === 100) {
-                    // 1. Hijau Mantap (100%)
                     customStyle = "background: rgba(16, 185, 129, 0.15) !important; color: #10b981 !important;";
                 } else if (currentPct >= 70) {
-                    // 2. Biru Produktif (70% - 99%)
                     customStyle = "background: rgba(14, 165, 233, 0.15) !important; color: #0ea5e9 !important;";
                 } else if (currentPct >= 40) {
-                    // 3. Kuning Lumayan (40% - 69%)
                     customStyle = "background: rgba(245, 158, 11, 0.15) !important; color: #f59e0b !important;";
                 } else {
-                    // 4. Merah Kurang (0% - 39%)
                     customStyle = "background: rgba(239, 68, 68, 0.15) !important; color: #ef4444 !important;";
                 }
 
@@ -726,10 +649,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
                     </td>
                 </tr>`;
             });
-        }
             html += "</table>";
             document.getElementById("history").innerHTML = html;
-        
+        }
+            
         function calcStreak() {
             let s = 0;
             let checkDate = new Date(Date.now() - tzoffset);
@@ -772,10 +695,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             document.getElementById("completedTasks").innerText = `${tasks.filter(t => t.done).length} / ${tasks.length}`;
             document.getElementById("taskMiniStatus").innerText = `${tasks.filter(t => t.done).length} habit selesai`;
             
-            let vals = Object.values(history);
             let pct = tasks.length ? Math.round(tasks.filter(t => t.done).length / tasks.length * 100) : 0;
             
-            // LOGIKA RANK MOBILE LEGENDS (REFRESH RATE: 3 BULAN IMMORTAL)
             let ach = "-";
             if (streak >= 90)       ach = "Mythical Immortal 🌟";
             else if (streak >= 75)  ach = "Mythical Glory 🔥";
@@ -810,17 +731,21 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 
         function updateClock() {
             const now = new Date();
-            if(document.getElementById("widget-jam")) {
-                document.getElementById("widget-jam").innerText = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).replace(/\./g, ' : ');
-            }
             const start = new Date(now.getFullYear(), 0, 0);
             const diff = now - start;
             const day = Math.floor(diff / 86400000);
-            document.getElementById("dayInfo").innerText = `Day ${day} / ${((now.getFullYear() % 4 === 0) ? 366 : 365)}`;
-            document.getElementById("weekInfo").innerText = `Week ${Math.ceil(day / 7)}`;
+            
+            document.getElementById("dayInfo").innerHTML = `<i class="fa-solid fa-calendar" style="margin-right: 4px; color: var(--hero-blue);"></i> Day ${day} / ${((now.getFullYear() % 4 === 0) ? 366 : 365)}`;
+            if(document.getElementById("dayInfoSidebar")) {
+                document.getElementById("dayInfoSidebar").innerText = `Day ${day} / ${((now.getFullYear() % 4 === 0) ? 366 : 365)}`;
+            }
+            
+            document.getElementById("weekInfo").innerHTML = `<i class="fa-solid fa-layer-group" style="margin-right: 4px; color: var(--chart-purple);"></i> Week ${Math.ceil(day / 7)}`;
+            
             let remainingHours = 23 - now.getHours();
             let remainingMinutes = 59 - now.getMinutes();
-            document.getElementById("timeRemaining").innerText = `Sisa hari ini: ${remainingHours}j ${remainingMinutes}m`;
+            document.getElementById("timeRemaining").innerText = `⏳ ${remainingHours}j ${remainingMinutes}m lagi`;
+            
             const h = now.getHours();
             let greet = h < 11 ? `☀️ Selamat Pagi, ${currentUserName}!` : h < 15 ? `🌤️ Selamat Siang, ${currentUserName}!` : h < 18 ? `🌇 Selamat Sore, ${currentUserName}!` : `🌙 Selamat Malam, ${currentUserName}!`;
             document.getElementById("greeting").innerText = greet;
@@ -848,7 +773,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
             buildCalendarMatrix();
         }
 
-        // ONE-TIME STARTUP LOAD
         function loadDataFromFirebase() {
             fetch("https://daily-tracker-umar-default-rtdb.asia-southeast1.firebasedatabase.app/.json")
                 .then(res => res.json())
@@ -858,25 +782,18 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
                         if (data.xp) xp = data.xp;
                         if (data.reminders) reminders = data.reminders;
                         
-                        // SYNC TEMPLATE HABIT DARI DATABASE
                         if (data.dailyTemplate && data.dailyTemplate.length > 0) {
                             dailyTemplate = data.dailyTemplate;
                         }
 
-                        // JIKA HARI INI SUDAH ADA PROGRESS, PAKAI DATA HARI INI
                         if (data.tasks && data.tasks[todayKey]) {
                             tasks = data.tasks[todayKey];
                         } else {
-                            // JIKA HARI BARU, GENERATE DARI TEMPLATE KEBIAASAAN YANG TERUPDATE
                             tasks = dailyTemplate.map(t => ({ name: t, done: false }));
                         }
                         
                         let savedName = data.nama || localStorage.getItem("inputNama") || "Umar";
                         applyDynamicName(savedName);
-                        console.log("todayKey =", todayKey);
-                        console.log("data =", data);
-                        console.log("data.tasks =", data.tasks);
-                        console.log("data.tasks[todayKey] =", data.tasks?.[todayKey]);
                         update();
                         applyDashboardSettings();
                     }
