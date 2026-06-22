@@ -462,6 +462,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 
         // SAVE DATA KE FIREBASE & LOCAL STORAGE
         function save() {
+
+            console.log("SAVE DIPANGGIL");
             localStorage.setItem("tasks_" + todayKey, JSON.stringify(tasks));
             localStorage.setItem("dailyTemplate_tracker", JSON.stringify(dailyTemplate));
             localStorage.setItem("reminders_tracker", JSON.stringify(reminders));
@@ -872,8 +874,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
                         let savedName = data.nama || localStorage.getItem("inputNama") || "Umar";
                         applyDynamicName(savedName);
                         console.log("todayKey =", todayKey);
-                        console.log("Firebase tasks =", data.tasks);
-                        console.log("Task hari ini =", data.tasks?.[todayKey]);
+                        console.log("data =", data);
+                        console.log("data.tasks =", data.tasks);
+                        console.log("data.tasks[todayKey] =", data.tasks?.[todayKey]);
                         update();
                         applyDashboardSettings();
                     }
