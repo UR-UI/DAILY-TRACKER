@@ -406,10 +406,10 @@
         }
 
         function delTask(i) {
-            if (confirm("Hapus target kebiasaan ini dari daftar harian?")) {
+            if (confirm("Hapus target kebiasaan ini dari daftar harian dan template?")) {
                 let nameToRemove = tasks[i].name;
                 tasks.splice(i, 1);
-                // Ikut hapus dari template biar besok ga muncul lagi
+                // Hapus dari template kebiasaan biar besok ga muncul lagi
                 dailyTemplate = dailyTemplate.filter(t => t !== nameToRemove);
                 update();
             }
@@ -423,22 +423,22 @@
         }
 
          function renderTasks() {
-                    let box = document.getElementById("tasks");   
-                    box.innerHTML = "";
-                    tasks.forEach((t, i) => {
-                        box.innerHTML += `
-                        <div class="task-item ${t.done ? 'done' : ''}">
-                            <div class="task-left">
-                                <input type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTask(${i})">
-                                <span class="task-text">${t.name}</span>
-                            </div>
-                            <div style="display: flex; align-items: center;">
-                                <span class="task-xp">+10 XP</span>
-                                <button class="btn-del" onclick="delTask(${i})"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </div>`;
-                    });
-                }
+            let box = document.getElementById("tasks");
+            box.innerHTML = "";
+            tasks.forEach((t, i) => {
+                box.innerHTML += `
+                <div class="task-item ${t.done ? 'done' : ''}">
+                    <div class="task-left">
+                        <input type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTask(${i})">
+                        <span class="task-text">${t.name}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="task-xp" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">+10 XP</span>
+                        <button class="btn-del" onclick="delTask(${i})" style="background: transparent; color: var(--target-red); border: none; cursor: pointer; padding: 4px 8px;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+            });
+        }
 
         // RENDER AGENDA & CEK LIVE ALERT PENGINGAT HARI INI
         function renderAgendaAndAlerts() {
