@@ -427,14 +427,16 @@
             box.innerHTML = "";
             tasks.forEach((t, i) => {
                 box.innerHTML += `
-                <div class="task-item ${t.done ? 'done' : ''}">
-                    <div class="task-left">
+                <div class="task-item ${t.done ? 'done' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--bg-main); border-radius: 12px; margin-bottom: 8px;">
+                    <div class="task-left" style="display: flex; align-items: center; gap: 10px;">
                         <input type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTask(${i})">
                         <span class="task-text">${t.name}</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 12px !important; min-width: max-content;">
                         <span class="task-xp" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">+10 XP</span>
-                        <button class="btn-del" onclick="delTask(${i})" style="background: transparent; color: var(--target-red); border: none; cursor: pointer; padding: 4px 8px;"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="delTask(${i})" style="display: inline-block !important; background: transparent !important; border: none !important; cursor: pointer !important; padding: 4px 8px !important; visibility: visible !important; opacity: 1 !important;">
+                            <i class="fa-solid fa-trash" style="color: #ef4444 !important; font-size: 1rem !important;"></i>
+                        </button>
                     </div>
                 </div>`;
             });
