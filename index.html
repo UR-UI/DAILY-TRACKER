@@ -422,23 +422,23 @@
             }
         }
 
-        function renderTasks() {
-            let box = document.getElementById("tasks");
-            box.innerHTML = "";
-            tasks.forEach((t, i) => {
-                box.innerHTML += `
-                <div class="task-item ${t.done ? 'done' : ''}">
-                    <div class="task-left">
-                        <input type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTask(${i})">
-                        <span class="task-text">${t.name}</span>
-                    </div>
-                    <div>
-                        <span class="task-xp">+10 XP</span>
-                        <button class="btn-del" onclick="delTask(${i})"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </div>`;
-            });
-        }
+         function renderTasks() {
+                    let box = document.getElementById("tasks");   
+                    box.innerHTML = "";
+                    tasks.forEach((t, i) => {
+                        box.innerHTML += `
+                        <div class="task-item ${t.done ? 'done' : ''}">
+                            <div class="task-left">
+                                <input type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTask(${i})">
+                                <span class="task-text">${t.name}</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span class="task-xp">+10 XP</span>
+                                <button class="btn-del" onclick="delTask(${i})"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>`;
+                    });
+                }
 
         // RENDER AGENDA & CEK LIVE ALERT PENGINGAT HARI INI
         function renderAgendaAndAlerts() {
