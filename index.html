@@ -123,41 +123,43 @@
         .reminder-banner h4 { display: flex; align-items: center; gap: 6px; font-size: 0.95rem; }
     </style>
 </head>
+    
 <body>
-
-    <div class="topbar">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <button class="btn" onclick="toggleSidebar()" style="padding: 6px 10px; background: var(--bg-main);"><i class="fa-solid fa-bars"></i></button>
-            <h2 id="greeting" style="font-size: 1.1rem; font-weight: 700;">☀️ Selamat Pagi, syarif!</h2>
-        </div>
-        <div class="profile-area" onclick="toggleSidebar()">
-            <div class="avatar" id="topbarAvatar">U</div>
-        </div>
-    </div>
-
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <div class="sidebar-container" id="sidebarContainer">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">
             <div class="avatar" id="profileAvatar">U</div>
             <div>
                 <h4 id="profileName">Umar</h4>
-                <span style="font-size: 0.8rem; color: var(--text-muted);" id="dayInfo">Day 0 / 365</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted);" id="dayInfoSidebar">Day 0 / 365</span>
             </div>
         </div>
         <nav style="display: flex; flex-direction: column; flex: 1;">
             <a href="#" class="sidebar-menu-item active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
             <div class="sidebar-menu-item"><i class="fa-solid fa-trophy"></i> Rank<span class="badge-sidebar" id="sidebarBadge">Level -</span></div>
-            <div class="clock-widget">
-                <div class="clock-time" id="widget-jam">00 : 00 : 00</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;" id="weekInfo">Week 0</div>
-                <div style="font-size: 0.75rem; color: var(--target-red); font-weight: 600;" id="timeRemaining">Sisa hari ini: --</div>
-            </div>
-            
             <div class="dark-toggle-container">
                 <span style="font-weight: 500; font-size: 0.9rem;"><i class="fa-solid fa-moon"></i> Dark Mode</span>
                 <input type="checkbox" id="darkThemeCheckbox" onchange="toggleThemeLayout()" style="width: 35px; height: 18px; cursor: pointer;">
             </div>
         </nav>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 25px 25px 5px 25px; max-width: 1400px; margin: 0 auto;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="avatar" id="topbarAvatar" onclick="toggleSidebar()" style="cursor: pointer; width: 42px; height: 42px; font-size: 1.1rem;">U</div>
+            <div>
+                <h2 id="greeting" style="font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 6px;">☀️ Selamat Pagi, Umar!</h2>
+                <div style="display: flex; gap: 10px; font-size: 0.78rem; color: var(--text-muted); font-weight: 500; margin-top: 2px;">
+                    <span id="dayInfo">Day 0 / 365</span>
+                    <span>•</span>
+                    <span id="weekInfo">Week 0</span>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
+            <div class="clock-time" id="widget-jam" style="font-size: 1.4rem; font-weight: 800; color: var(--hero-blue);">00 : 00 : 00</div>
+            <span id="timeRemaining" style="font-size: 0.72rem; color: var(--target-red); font-weight: 600; margin-top: 2px;">Sisa hari ini: --</span>
+        </div>
     </div>
 
     <div class="dashboard-container">
@@ -272,8 +274,20 @@
 
         // List Template Habit Default (Disimpan sebagai template mentah terpisah)
         const initialDefaultTemplate = [
-            "Bangun tepat waktu", "Olahraga", "Membaca 10 halaman", "Belajar fokus",
-            "Minum air cukup", "Merapikan kamar", "Tidur tepat waktu", "Belajar coding 30 menit", "Jurnal malam"
+           "Tahajud", 
+            "Bangun tepat waktu", 
+            "Al Matsurat pagi", 
+            "Al Wakiah + Ar Rahman", 
+            "Merapikan kamar", 
+            "Dhuha", 
+            "Membaca Yasin", 
+            "Infaq Shodaqoh", 
+            "Al Matsurat Petang", 
+            "Do Qobliyah full", 
+            "Do Ba'diyah full", 
+            "Do some Rawatib", 
+            "Ayat kursi + triqul after prayer", 
+            "Beberes malem"
         ];
 
         let dailyTemplate = JSON.parse(localStorage.getItem("dailyTemplate_tracker") || "[]");
@@ -635,7 +649,7 @@
             }
         }
 
-        function updateClock() {
+       function updateClock() {
             const now = new Date();
             if(document.getElementById("widget-jam")) {
                 document.getElementById("widget-jam").innerText = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).replace(/\./g, ' : ');
@@ -643,11 +657,20 @@
             const start = new Date(now.getFullYear(), 0, 0);
             const diff = now - start;
             const day = Math.floor(diff / 86400000);
-            document.getElementById("dayInfo").innerText = `Day ${day} / ${((now.getFullYear() % 4 === 0) ? 366 : 365)}`;
+            
+            // Update teks info tanggal atas dan sidebar
+            const totalDays = ((now.getFullYear() % 4 === 0) ? 366 : 365);
+            document.getElementById("dayInfo").innerText = `Day ${day} / ${totalDays}`;
+            if(document.getElementById("dayInfoSidebar")) {
+                document.getElementById("dayInfoSidebar").innerText = `Day ${day} / ${totalDays}`;
+            }
+            
             document.getElementById("weekInfo").innerText = `Week ${Math.ceil(day / 7)}`;
+            
             let remainingHours = 23 - now.getHours();
             let remainingMinutes = 59 - now.getMinutes();
             document.getElementById("timeRemaining").innerText = `Sisa hari ini: ${remainingHours}j ${remainingMinutes}m`;
+            
             const h = now.getHours();
             let greet = h < 11 ? `☀️ Selamat Pagi, ${currentUserName}!` : h < 15 ? `🌤️ Selamat Siang, ${currentUserName}!` : h < 18 ? `🌇 Selamat Sore, ${currentUserName}!` : `🌙 Selamat Malam, ${currentUserName}!`;
             document.getElementById("greeting").innerText = greet;
