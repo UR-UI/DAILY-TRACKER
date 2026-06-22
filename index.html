@@ -545,34 +545,41 @@
             });
         }
 
-           function renderHistory() {
+               function renderHistory() {
                 let keys = Object.keys(history).sort().reverse().slice(0, 4);
                 if(keys.length === 0) keys = [todayKey];
-                let html = "<table class='history-table'>";
+                let html = "<table class='history-table' style='width:100%; border-collapse:collapse;'>";
+                
                 keys.forEach(k => {
                     let currentPct = history[k] || 0;
                     
-                    let bgStyle = "";
-                    let textColor = "";
-                    
-                    // LOGIKA 4 WARNA INDIKATOR
+                    // LOGIKA 4 WARNA: Langsung dikunci di variabel teks style murni
+                    let customStyle = "";
                     if (currentPct === 100) {
-                        // 1. Hijau Sukses (100%)
-                        bgStyle = "background: rgba(16, 185, 129, 0.15) !important;";
-                        textColor = "color: #10b981 !important;";
+                        customStyle = "background: rgba(16, 185, 129, 0.15) !important; color: #10b981 !important;";
                     } else if (currentPct >= 70) {
-                        // 2. Biru / Teal Produktif (70% - 99%)
-                        bgStyle = "background: rgba(14, 165, 233, 0.15) !important;";
-                        textColor = "color: #0ea5e9 !important;";
+                        customStyle = "background: rgba(14, 165, 233, 0.15) !important; color: #0ea5e9 !important;";
                     } else if (currentPct >= 40) {
-                        // 3. Kuning/Oranye Lumayan (40% - 69%)
-                        bgStyle = "background: rgba(245, 158, 11, 0.15) !important;";
-                        textColor = "color: #f59e0b !important;";
+                        customStyle = "background: rgba(245, 158, 11, 0.15) !important; color: #f59e0b !important;";
                     } else {
-                        // 4. Merah Kurang (0% - 39%)
-                        bgStyle = "background: rgba(239, 68, 68, 0.15) !important;";
-                        textColor = "color: #ef4444 !important;";
+                        customStyle = "background: rgba(239, 68, 68, 0.15) !important; color: #ef4444 !important;";
                     }
+    
+                    let formattedKeyDate = new Date(k).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' });
+                    
+                    html += `
+                    <tr>
+                        <td style="font-weight:600; padding: 14px 8px; border-bottom: 1px solid var(--border);"><i class="fa-regular fa-calendar-check" style="margin-right:8px; color: #3b82f6 !important;"></i> ${formattedKeyDate}</td>
+                        <td style="text-align:right; padding: 14px 8px; border-bottom: 1px solid var(--border);">
+                            <span style="${customStyle} font-weight: 700; padding: 6px 10px; border-radius: 8px; display: inline-block;">
+                                ${currentPct}%
+                            </span>
+                        </td>
+                    </tr>`;
+                });
+                html += "</table>";
+                document.getElementById("history").innerHTML = html;
+            }
 
                 let formattedKeyDate = new Date(k).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' });
                 html += `
