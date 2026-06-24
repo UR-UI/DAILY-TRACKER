@@ -199,6 +199,202 @@
         .reminder-banner { background: #fef3c7; border: 1px solid #f59e0b; color: #d97706; padding: 12px; border-radius: 12px; margin-bottom: 15px; grid-column: span 12; display: none; flex-direction: column; gap: 5px; }
         [data-theme="dark"] .reminder-banner { background: #78350f; border-color: #d97706; color: #fef3c7; }
         .reminder-banner h4 { display: flex; align-items: center; gap: 6px; font-size: 0.95rem; }
+
+        /* ===== MOBILE RESPONSIVE FIXES ===== */
+        @media (max-width: 767px) {
+            /* Topbar */
+            .topbar {
+                padding: 10px 14px;
+                flex-wrap: nowrap;
+                align-items: center;
+            }
+
+            #greeting {
+                font-size: 1rem !important;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 200px;
+            }
+
+            /* Fix topbar info bar overflow */
+            .topbar-info-bar {
+                width: auto !important;
+                max-width: 100% !important;
+                flex-wrap: wrap !important;
+                font-size: 0.68rem !important;
+                gap: 5px !important;
+                padding: 4px 9px !important;
+                row-gap: 2px !important;
+            }
+
+            .topbar > div:first-child {
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+            }
+
+            /* Dashboard padding */
+            .dashboard-container {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            /* Make main content stack properly */
+            .main-content {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+
+            /* col-left and col-right stack with gaps */
+            .col-left,
+            .col-right {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 12px !important;
+                width: 100% !important;
+            }
+
+            /* Card sizing */
+            .card {
+                padding: 14px 13px;
+                border-radius: 12px;
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+
+            /* Hero widget */
+            .hero-widget {
+                padding: 16px;
+                flex-direction: row;
+                gap: 12px;
+                align-items: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.2rem !important;
+                line-height: 1.1;
+            }
+
+            .hero-chart-box {
+                width: 80px !important;
+                height: 80px !important;
+                flex-shrink: 0;
+            }
+
+            .hero-percent {
+                font-size: 1rem !important;
+            }
+
+            /* Stats grid - 2 cols is fine, reduce padding */
+            .stat-grid {
+                gap: 8px;
+            }
+
+            .stat-box {
+                padding: 11px 10px;
+            }
+
+            .stat-val {
+                font-size: 1.2rem;
+            }
+
+            /* Task items - no text overflow */
+            .task-item {
+                flex-wrap: nowrap;
+                min-width: 0;
+            }
+
+            .task-left {
+                min-width: 0;
+                flex: 1;
+                overflow: hidden;
+            }
+
+            .task-text {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: calc(100vw - 160px);
+            }
+
+            /* Prevent iOS auto-zoom on input focus */
+            .input-control {
+                font-size: 16px !important;
+            }
+
+            /* Buttons - minimum touch target */
+            .btn {
+                min-height: 40px;
+                padding: 9px 14px;
+            }
+
+            .btn-add-trigger {
+                min-height: 40px;
+                padding: 9px 14px;
+            }
+
+            /* Agenda item */
+            .agenda-item {
+                flex-wrap: nowrap;
+                min-width: 0;
+            }
+
+            .agenda-item .task-left {
+                min-width: 0;
+                flex: 1;
+                overflow: hidden;
+            }
+
+            .agenda-text {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: block;
+                max-width: calc(100vw - 120px);
+            }
+
+            /* Calendar matrix - smaller cells */
+            .calendar-day {
+                font-size: 0.72rem;
+            }
+
+            /* History table */
+            .history-table td {
+                padding: 8px 4px;
+                font-size: 0.85rem;
+            }
+
+            /* Trend chart */
+            #trendChart {
+                max-height: 150px;
+            }
+
+            /* Input group - stacks well */
+            .input-group {
+                gap: 6px;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 360px) {
+            .topbar-info-bar {
+                font-size: 0.62rem !important;
+                gap: 4px !important;
+            }
+
+            #greeting {
+                font-size: 0.9rem !important;
+                max-width: 160px;
+            }
+
+            .hero-text h1 {
+                font-size: 1.9rem !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -210,7 +406,7 @@
             <div>
                 <h2 id="greeting" style="font-size: 1.2rem; font-weight: 700;">☀️ Selamat Pagi, Umar!</h2>
                 
-                <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.15); padding: 5px 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center; font-size: 0.78rem; font-weight: 600; margin-top: 6px; width: max-content;">
+                <div class="topbar-info-bar" style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.15); padding: 5px 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center; font-size: 0.78rem; font-weight: 600; margin-top: 6px;">
                     <span id="dayInfo" style="color: var(--text-main);"><i class="fa-solid fa-calendar" style="margin-right: 4px; color: var(--hero-blue);"></i> Day -- / --</span>
                     <span style="color: var(--border);">|</span>
                     <span id="weekInfo" style="color: var(--text-main);"><i class="fa-solid fa-layer-group" style="margin-right: 4px; color: var(--chart-purple);"></i> Week --</span>
